@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>그림으로 보는 한국사 — 초등 교과 연계</title>
+<meta name="theme-color" content="#FBF2D9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="한국사">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+:root{--hanji:#FBF2D9;--hanji-deep:#F1E2B6;--meok:#22303F;--jjok:#2E4A8B;--jusa:#C8412B;--nok:#2F7A5A;--geum:#E0A526;--geum-light:#F6D77A;--line:#D9C89A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;background:var(--hanji);color:var(--meok);line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+button:focus-visible{outline:3px solid var(--jjok);outline-offset:2px}
+#app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column;padding:20px 18px 96px}
+.screen.on{display:flex}
+h1{font-size:25px;font-weight:800;letter-spacing:-.5px;line-height:1.2}
+h2{font-size:19px;font-weight:800;letter-spacing:-.3px}
+h3{font-size:15px;font-weight:800;margin:18px 0 8px}
+.sub{color:#5B6675;font-size:14px;margin-top:4px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+.back{width:40px;height:40px;border-radius:50%;background:var(--hanji-deep);font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pill{background:var(--meok);color:var(--hanji);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* 홈 */
+.unit{font-size:12px;font-weight:800;color:var(--jjok);margin:20px 0 8px;padding-left:10px;border-left:4px solid var(--jjok);line-height:1.3}
+.chap{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:8px}
+.chap .em{width:48px;height:48px;border-radius:14px;background:var(--hanji-deep);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.chap .nm{font-weight:800;font-size:15px}.chap .st{font-size:12px;color:#6B7684}
+.chap.done{background:var(--geum-light);border-color:var(--geum)}.chap.done .em{background:var(--geum)}
+.chap .sc{margin-left:auto;font-weight:800;font-size:13px;color:var(--nok);white-space:nowrap}
+
+/* 장면 (애니메이션) */
+.stage{background:#fff;border:2px solid var(--line);border-radius:22px;overflow:hidden}
+.stage svg{width:100%;display:block}
+.cap{padding:14px 16px 6px;font-size:15px;line-height:1.55}
+.keypt{margin:8px 16px 14px;background:var(--hanji);border-left:4px solid var(--geum);border-radius:0 12px 12px 0;padding:8px 12px;font-size:13px;font-weight:700}
+.dots{display:flex;gap:6px;justify-content:center;margin:12px 0}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block}.dots i.on{background:var(--jjok)}
+.row{display:flex;gap:8px}
+.cta{display:block;width:100%;padding:15px;border-radius:18px;background:var(--jusa);color:#fff;font-size:16px;font-weight:800;margin-top:10px}
+.cta.blue{background:var(--jjok)}.cta.ghost{background:var(--hanji-deep);color:var(--meok)}
+.cta:disabled{opacity:.35}
+
+/* 애니메이션 */
+svg [class^="a-"],svg [class*=" a-"]{transform-box:fill-box;transform-origin:center}
+.a-spin{animation:spin 12s linear infinite}
+.a-flicker{animation:flick 1.1s ease-in-out infinite alternate}
+.a-bob{animation:bob 1.6s ease-in-out infinite}
+.a-bob2{animation:bob 1.6s ease-in-out .5s infinite}
+.a-sway{animation:sway 2.4s ease-in-out infinite;transform-origin:bottom center}
+.a-float{animation:floaty 2.6s ease-in-out infinite}
+.a-rise{animation:rise .9s cubic-bezier(.2,.8,.2,1) both}
+.a-pop{animation:pop .6s cubic-bezier(.2,.8,.2,1) both}
+.a-drop{animation:drop 1.6s cubic-bezier(.3,1.4,.4,1) both}
+.a-slide{animation:slide 4s linear infinite}
+.a-slide2{animation:slide2 3s ease-in-out infinite alternate}
+.a-wave{animation:wave 1s ease-in-out infinite alternate;transform-origin:left center}
+.a-gallop{animation:gallop .5s ease-in-out infinite alternate}
+.a-lift{animation:lift 2.2s ease-in-out infinite alternate}
+.a-dance{animation:dance 1s ease-in-out infinite alternate}
+.a-dash{animation:dash 1.2s linear infinite}
+.a-down{animation:down 1.6s ease-out both}
+.a-in{animation:inleft 1.6s ease-out 1.2s both}
+.d1{animation-delay:.35s!important}.d2{animation-delay:.7s!important}.d3{animation-delay:1.05s!important}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes flick{from{opacity:.6;transform:scale(.95)}to{opacity:1;transform:scale(1.05)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-6px) rotate(1deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@keyframes drop{from{transform:translateY(-70px)}to{transform:none}}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(40px)}}
+@keyframes slide2{from{transform:translateX(-14px)}to{transform:translateX(14px)}}
+@keyframes wave{from{transform:skewY(-6deg)}to{transform:skewY(6deg)}}
+@keyframes gallop{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-6px) rotate(2deg)}}
+@keyframes lift{from{transform:translateY(0)}to{transform:translateY(-34px)}}
+@keyframes dance{from{transform:rotate(-8deg) translateY(0)}to{transform:rotate(8deg) translateY(-6px)}}
+@keyframes dash{to{stroke-dashoffset:-32}}
+@keyframes down{from{opacity:0;transform:translateY(-40px)}to{opacity:1;transform:none}}
+@keyframes inleft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){svg *{animation:none!important}}
+
+/* 정리 */
+.term{display:flex;gap:10px;background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:6px;font-size:14px}
+.term b{color:var(--jjok);white-space:nowrap;min-width:84px}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:3px;background:var(--line)}
+.tl div{position:relative;margin-bottom:8px;font-size:14px}
+.tl div::before{content:"";position:absolute;left:-20px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--geum);border:2px solid #fff}
+.tl b{color:var(--jusa);margin-right:6px}
+
+/* 퀴즈 */
+.qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.qdots{display:flex;gap:6px}.qdots i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block}
+.qdots i.ok{background:var(--nok)}.qdots i.no{background:var(--jusa)}
+.qbox{background:#fff;border-radius:20px;padding:18px;border:2px solid var(--line)}
+.qbox .q{font-size:17px;font-weight:800;line-height:1.4;margin-bottom:14px}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 14px;font-size:15px;font-weight:700;margin-bottom:8px}
+.opt .n{width:24px;height:24px;border-radius:50%;background:var(--hanji-deep);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.opt.ok{border-color:var(--nok);background:#E4F3EB}.opt.no{border-color:var(--jusa);background:#FBE5E0}
+.reply{background:var(--geum-light);border-radius:14px;padding:12px 14px;font-size:14px;margin-top:6px;animation:rise .3s}
+.score{background:var(--meok);color:var(--hanji);border-radius:22px;padding:22px;text-align:center}
+.score .big{font-size:40px;font-weight:800;color:var(--geum-light)}
+
+/* 리포트 */
+.rep{background:#fff;border:2px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:10px}
+.rep .r1{display:flex;justify-content:space-between;font-weight:800;font-size:14px}
+.rep .r2{font-size:13px;color:#5B6675;margin-top:4px}
+.bar{height:8px;border-radius:4px;background:var(--hanji-deep);margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--nok)}
+
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:2px solid var(--line);display:flex;padding:8px 6px calc(8px + env(safe-area-inset-bottom))}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:700;color:#8A93A0;padding:6px 0;border-radius:12px}
+nav button span{font-size:22px}nav button.on{color:var(--jjok);background:#EEF2FA}
+
+/* 말풍선 · 안내자 */
+.talk{display:flex;gap:10px;align-items:flex-start;padding:12px 14px 4px}
+.talk .av{width:46px;height:46px;border-radius:50%;flex-shrink:0;background:var(--geum);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.talk .av svg{width:46px;height:46px}
+.talk .bub{background:var(--hanji);border-radius:4px 18px 18px 18px;padding:10px 14px;font-size:15px;line-height:1.55;flex:1}
+.talk .who{font-size:11px;font-weight:800;color:var(--jusa);margin-bottom:2px}
+.ask{background:var(--meok);color:var(--hanji);border-radius:22px;padding:18px}
+.ask .q{font-size:16px;font-weight:800;line-height:1.5;margin-bottom:12px}
+.ask .opt{background:#fff;color:var(--meok)}
+.ask .reply{color:var(--meok)}
+.stage svg.scene{filter:saturate(1.08)}
+.short input{width:100%;font:inherit;font-size:16px;padding:13px 14px;border:2px solid var(--line);border-radius:14px;background:#fff;margin-bottom:8px}
+.short input:focus{outline:none;border-color:var(--jjok)}
+.modal{position:fixed;inset:0;background:rgba(34,48,63,.6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9}
+.modal .box{background:var(--hanji);border-radius:24px;padding:24px 20px;max-width:360px;width:100%}
+.modal input{width:100%;font:inherit;font-size:18px;padding:14px;border:2px solid var(--line);border-radius:14px;background:#fff;margin:12px 0 4px}
+.cheer{display:inline-block;background:var(--geum-light);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:800;margin-bottom:10px}
+
+.wallet{background:linear-gradient(150deg,var(--meok),#3A4B66);color:var(--hanji);border-radius:24px;padding:22px 20px;position:relative;overflow:hidden}
+.wallet::after{content:"₩";position:absolute;right:-6px;bottom:-30px;font-size:120px;font-weight:800;opacity:.08}
+.wallet .amt{font-size:38px;font-weight:800;color:var(--geum-light);letter-spacing:-1px}
+.wallet .lbl{font-size:13px;color:#BFC7D3}
+.log{display:flex;justify-content:space-between;align-items:center;background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:6px;font-size:14px}
+.log .d{font-size:11px;color:#8A93A0}
+.log b.plus{color:var(--nok)} .log b.minus{color:var(--jusa)} .log b.wait{color:var(--geum)}
+.pend{background:var(--geum-light);border:2px solid var(--geum);border-radius:18px;padding:14px 16px;margin-bottom:10px}
+.pin{display:flex;gap:8px;margin:8px 0}
+.pin input{flex:1;font:inherit;font-size:20px;letter-spacing:8px;text-align:center;padding:12px;border:2px solid var(--line);border-radius:14px;background:#fff}
+.set{display:flex;align-items:center;justify-content:space-between;background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:6px;font-size:14px}
+.set input{width:90px;font:inherit;font-size:15px;text-align:right;padding:6px 8px;border:2px solid var(--line);border-radius:10px}
+.celebrate{background:var(--geum-light);border:2px solid var(--geum);border-radius:22px;padding:18px;text-align:center;margin-top:12px;animation:pop .5s cubic-bezier(.2,.8,.2,1)}
+.celebrate .big{font-size:34px}
+
+.ios{background:var(--meok);color:var(--hanji);border-radius:18px;padding:12px 14px;font-size:13px;margin-bottom:12px;display:flex;gap:10px;align-items:center}
+.ios b{color:var(--geum-light)}
+.ios button{margin-left:auto;font-weight:800;color:#BFC7D3}
+</style>
+</head>
+<body>
+<div id="app">
+<section class="screen on" id="s-home">
+  <h1>그림으로 보는 한국사</h1>
+  <p class="sub">초등 사회 교과서 순서 그대로 · 장면으로 보고 문제로 확인</p>
+  <div id="home"></div>
+</section>
+<section class="screen" id="s-scene">
+  <div class="top"><button class="back" onclick="go('home')">←</button><span class="pill" id="sc-title"></span></div>
+  <div class="stage" id="stage"></div>
+  <div class="dots" id="sc-dots"></div>
+  <div class="row"><button class="cta ghost" id="sc-prev" onclick="scene(-1)">◀ 이전</button><button class="cta blue" id="sc-next" onclick="scene(1)">다음 장면 ▶</button></div>
+</section>
+<section class="screen" id="s-summary">
+  <div class="top"><button class="back" onclick="go('home')">←</button><span class="pill" id="sm-title"></span></div>
+  <div id="summary"></div>
+</section>
+<section class="screen" id="s-quiz">
+  <div class="top"><button class="back" onclick="go('home')">←</button><span class="pill" id="qz-title"></span></div>
+  <div id="quiz"></div>
+</section>
+<section class="screen" id="s-exam">
+  <h1>모의고사</h1>
+  <p class="sub">배운 단원 전체에서 10문제를 섞어 내요. 시험 전 점검용!</p>
+  <div id="exam" style="margin-top:14px"></div>
+</section>
+<section class="screen" id="s-wallet">
+  <h1>내 지갑</h1>
+  <p class="sub">모의고사 100점이면 가상 캐시가 쌓여요</p>
+  <div id="wallet" style="margin-top:14px"></div>
+</section>
+<section class="screen" id="s-report">
+  <h1>부모님 리포트</h1>
+  <p class="sub">단원별 점수와 틀린 문제를 확인하세요</p>
+  <div id="report" style="margin-top:14px"></div>
+</section>
+<nav>
+  <button class="on" data-t="home" onclick="go('home')"><span>📚</span>챕터</button>
+  <button data-t="exam" onclick="go('exam')"><span>✏️</span>모의고사</button>
+  <button data-t="wallet" onclick="go('wallet')"><span>💰</span>지갑</button>
+  <button data-t="report" onclick="go('report')"><span>📊</span>부모님</button>
+</nav>
+</div>
+<script>
+// ===== 그림 부품 (SVG) =====
+const DEFS=`<defs>
+<linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CCBE8"/><stop offset="1" stop-color="#EAF4F9"/></linearGradient>
+<linearGradient id="gNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151D2B"/><stop offset="1" stop-color="#3A4B66"/></linearGradient>
+<linearGradient id="gWarm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7D9A8"/><stop offset="1" stop-color="#FBF2D9"/></linearGradient>
+<linearGradient id="gGrass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CCB84"/><stop offset="1" stop-color="#5E9A3C"/></linearGradient>
+<linearGradient id="gDirt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D9B77A"/><stop offset="1" stop-color="#A67C52"/></linearGradient>
+<linearGradient id="gSea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FC3E3"/><stop offset="1" stop-color="#3D7BB0"/></linearGradient>
+<linearGradient id="gStone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B7BCC2"/><stop offset="1" stop-color="#6E747A"/></linearGradient>
+<radialGradient id="gGlow"><stop offset="0" stop-color="#FFF3B0" stop-opacity=".9"/><stop offset="1" stop-color="#FFF3B0" stop-opacity="0"/></radialGradient>
+<filter id="paper" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 0.35 0 0 0 0 0.28 0 0 0 0 0.18 0 0 0 .18 0"/></filter>
+<filter id="soft"><feGaussianBlur stdDeviation=".4"/></filter>
+</defs>`;
+const GRAD={'#DCEFF7':'url(#gSky)','#22303F':'url(#gNight)','#FBF2D9':'url(#gWarm)','#8FBF7A':'url(#gGrass)','#C9A66B':'url(#gDirt)','#7FB3D5':'url(#gSea)','#5B94BE':'url(#gSea)','#F4ECD6':'url(#gWarm)','#E7D3B2':'url(#gWarm)','#F1E6D0':'url(#gWarm)','#EEF5EA':'url(#gSky)','#C9CFD6':'url(#gStone)','#8A9096':'url(#gStone)','#E8DFC0':'url(#gDirt)','#7A5230':'url(#gDirt)'};
+const g=c=>GRAD[c]||c;
+const P = {
+  bg:(sky,ground)=>`<rect width="340" height="200" fill="${g(sky)}"/>${sky==='#22303F'?'':`<g class="a-slide"><ellipse cx="150" cy="30" rx="26" ry="9" fill="#fff" opacity=".8"/><ellipse cx="168" cy="26" rx="16" ry="8" fill="#fff" opacity=".8"/><ellipse cx="250" cy="52" rx="22" ry="8" fill="#fff" opacity=".7"/></g>`}<rect y="142" width="340" height="58" fill="${g(ground)}"/><path d="M0 142 q40 -6 80 0 t80 0 t80 0 t80 0 t40 0 v6 h-360z" fill="${g(ground)}" opacity=".6"/>`,
+  sun:(x,y)=>`<g transform="translate(${x},${y})"><circle r="40" fill="url(#gGlow)"/><g class="a-spin"><circle r="16" fill="#F6D77A"/><g stroke="#F6D77A" stroke-width="3" stroke-linecap="round">${[0,45,90,135].map(a=>`<line x1="-24" x2="24" transform="rotate(${a})"/>`).join('')}</g></g></g>`,
+  hill:(x,w,h,c)=>`<path d="M${x-w/2} 142 Q${x-w/4} ${142-h*.7} ${x} ${142-h} Q${x+w/4} ${142-h*.7} ${x+w/2} 142Z" fill="${c}"/><path d="M${x-w/2} 142 Q${x-w/4} ${142-h*.7} ${x} ${142-h} Q${x+w/6} ${142-h*.8} ${x+w/3} ${142-h*.4}" stroke="#fff" stroke-opacity=".25" stroke-width="3" fill="none"/>`,
+  person:(x,y,c,cls='',hat='')=>`<g transform="translate(${x},${y})"><ellipse cy="26" rx="12" ry="3" fill="#000" opacity=".15"/><g class="${cls}"><path d="M-8 -18 q8 -16 16 0z" fill="#3A2A22"/><circle cy="-21" r="8.5" fill="#F6D2B0"/><path d="M-8.5 -23 q8.5 -12 17 0" fill="#3A2A22"/><circle cx="-3" cy="-21" r="1.3" fill="#22303F"/><circle cx="3" cy="-21" r="1.3" fill="#22303F"/><path d="M-2.5 -17.5 q2.5 2 5 0" stroke="#22303F" stroke-width="1" fill="none"/><circle cx="-5.5" cy="-18" r="1.6" fill="#F4A8A0" opacity=".6"/><circle cx="5.5" cy="-18" r="1.6" fill="#F4A8A0" opacity=".6"/>${hat}<path d="M-10 -12 q10 -4 20 0 v12 q-10 3 -20 0z" fill="${c}"/><path d="M-3 -12 l3 8 l3 -8" stroke="#fff" stroke-opacity=".7" stroke-width="1.2" fill="none"/><path d="M-11 -10 l-4 12 M11 -10 l4 12" stroke="${c}" stroke-width="4" stroke-linecap="round"/><path d="M-9 0 h18 l2 12 h-22z" fill="${c}" opacity=".85"/><path d="M-6 12 v11 M6 12 v11" stroke="#3A2A22" stroke-width="4" stroke-linecap="round"/></g></g>`,
+  gat:`<path d="M-12 -29 h24 l-3 -8 h-18z M-8 -37 h16" stroke="#111" stroke-width="2" fill="#111"/><path d="M-12 -29 h24" stroke="#444" stroke-width="1"/>`,
+  crown:`<path d="M-9 -29 L-6 -37 L0 -31 L6 -37 L9 -29Z" fill="#E0A526"/><circle cx="0" cy="-33" r="1.5" fill="#C8412B"/>`,
+  label:(x,y,t,c='#22303F')=>`<text x="${x}" y="${y}" font-size="11" font-weight="800" text-anchor="middle" fill="${c}" stroke="${c==='#fff'?'#22303F':'#FBF2D9'}" stroke-width="3" paint-order="stroke" stroke-linejoin="round">${t}</text>`,
+  tag:(x,y,t)=>`<g transform="translate(${x},${y})"><rect x="-34" y="-10" width="68" height="20" rx="10" fill="#22303F"/><text font-size="10" font-weight="800" text-anchor="middle" y="4" fill="#FBF2D9">${t}</text></g>`,
+  fire:(x,y)=>`<g transform="translate(${x},${y})"><circle r="30" fill="url(#gGlow)"/><g class="a-flicker"><path d="M0 0 C-12 -8 -8 -24 0 -32 C8 -24 12 -8 0 0Z" fill="#E8602C"/><path d="M0 -3 C-6 -8 -4 -18 0 -22 C4 -18 6 -8 0 -3Z" fill="#F6D77A"/></g><path d="M-14 2 l28 -4 M-12 -2 l24 6" stroke="#5A3A24" stroke-width="3" stroke-linecap="round"/></g>`,
+  house:(x,y,w,h,roof,wall)=>`<g transform="translate(${x},${y})"><ellipse cy="2" rx="${w/2+6}" ry="3" fill="#000" opacity=".12"/><rect x="${-w/2}" y="${-h}" width="${w}" height="${h}" fill="${wall}"/><rect x="${-w/6}" y="${-h*.6}" width="${w/3}" height="${h*.6}" fill="#5A3A24"/><path d="M${-w/2-8} ${-h} Q0 ${-h-h*.8} ${w/2+8} ${-h}Z" fill="${roof}"/><path d="M${-w/2-4} ${-h-2} Q0 ${-h-h*.55} ${w/2+4} ${-h-2}" stroke="#fff" stroke-opacity=".25" stroke-width="2" fill="none"/></g>`,
+  tree:(x,y)=>`<g transform="translate(${x},${y})"><g class="a-sway"><rect x="-3" y="-22" width="6" height="22" fill="#7A5230"/><circle cy="-30" r="14" fill="#2F7A5A"/><circle cx="-6" cy="-34" r="8" fill="#3F9A6A"/></g></g>`,
+  wave:(y,c)=>`<g class="a-slide"><path d="M-40 ${y} q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 v40 h-400z" fill="${c}"/><path d="M-40 ${y} q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" stroke="#fff" stroke-opacity=".5" stroke-width="2" fill="none"/></g>`,
+  boat:(x,y,cls='a-float')=>`<g transform="translate(${x},${y})"><g class="${cls}"><path d="M-30 0 L30 0 L20 14 L-20 14Z" fill="#7A5230"/><path d="M-30 0 h60" stroke="#5A3A24" stroke-width="3"/><rect x="-2" y="-30" width="4" height="30" fill="#5A3A24"/><path d="M2 -30 Q20 -20 24 -8 L2 -8Z" fill="#FBF2D9"/></g></g>`,
+  flag:(x,y,c='#fff')=>`<g transform="translate(${x},${y})"><rect x="-1" y="-30" width="2" height="30" fill="#333"/><g class="a-wave"><path d="M1 -30 h18 v12 h-18z" fill="${c}" stroke="#ccc" stroke-width=".5"/><circle cx="10" cy="-24" r="4" fill="#C8412B"/><path d="M6 -24 a4 4 0 0 0 8 0" fill="#2E4A8B"/></g></g>`,
+  scroll:(x,y,t)=>`<g transform="translate(${x},${y})"><g class="a-rise"><rect x="-38" y="-24" width="76" height="48" rx="4" fill="#FBF2D9" stroke="#B89B5A" stroke-width="2"/><rect x="-42" y="-28" width="6" height="56" rx="3" fill="#8B6B4E"/><rect x="36" y="-28" width="6" height="56" rx="3" fill="#8B6B4E"/><text font-size="10" font-weight="800" text-anchor="middle" y="-6" fill="#22303F">${t.split('|').map((l,i)=>`<tspan x="0" dy="${i?12:0}">${l}</tspan>`).join('')}</text></g></g>`,
+  map:(regions)=>`<g class="a-slide" opacity=".5">${[30,70,110,150,190].map(y=>`<path d="M-40 ${y} q20 -5 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" stroke="#fff" stroke-width="1.5" fill="none"/>`).join('')}</g><path d="M124 24 L204 16 L242 64 L230 124 L216 174 L180 194 L146 174 L132 134 L116 84Z" fill="#000" opacity=".15"/><path d="M120 20 L200 12 L238 60 L226 120 L212 170 L176 190 L142 170 L128 130 L112 80Z" fill="#E8DFC0" stroke="#B89B5A" stroke-width="2"/>${regions}`,
+  horse:(x,y,body,rider,extra='')=>`<g transform="translate(${x},${y})"><ellipse cy="28" rx="30" ry="4" fill="#000" opacity=".15"/><g class="a-gallop"><ellipse rx="28" ry="11" fill="${body}"/><path d="M22 -6 l12 -16 l8 4 l-4 12 l-10 6z" fill="${body}"/><path d="M30 -18 l6 -5" stroke="#3A2A22" stroke-width="4" stroke-linecap="round"/><circle cx="38" cy="-16" r="1.5" fill="#fff"/><path d="M-30 0 q-14 -4 -12 -16" stroke="${body}" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M-20 8 v18 M-8 10 v16 M8 10 v16 M20 8 v18" stroke="${body}" stroke-width="5" stroke-linecap="round"/><path d="M-6 -8 h14 v-4 h-14z" fill="#8B6B4E"/><circle cy="-32" r="7" fill="#F6D2B0"/><path d="M-7 -34 q7 -10 14 0" fill="#3A2A22"/><circle cx="-2.5" cy="-32" r="1.2" fill="#22303F"/><circle cx="2.5" cy="-32" r="1.2" fill="#22303F"/><path d="M-9 -25 q9 -4 18 0 v18 q-9 3 -18 0z" fill="${rider}"/>${extra}</g></g>`,
+};
+const K = {sky:'#DCEFF7',night:'#22303F',grass:'#8FBF7A',dirt:'#C9A66B',sea:'#7FB3D5',sea2:'#5B94BE',stone:'#9AA0A6',wood:'#7A5230',red:'#C8412B',blue:'#2E4A8B',gold:'#E0A526',green:'#2F7A5A',hanji:'#FBF2D9'};
+
+// 각 장면: {svg, cap(설명), key(핵심 포인트)}
+const SCENES = {
+ 1:[
+  {cap:'구석기 시대 사람들은 동굴에서 살며 불을 쓰고, 돌을 깨서 만든 주먹도끼로 사냥했어요.',key:'구석기 = 뗀석기(주먹도끼) · 동굴 · 이동 생활',
+   svg:`${P.bg(K.night,K.dirt)}<circle cx="290" cy="40" r="14" fill="#F6D77A"/><path d="M40 142 Q60 40 140 50 Q200 60 200 142Z" fill="#5C5F63"/><path d="M80 142 Q90 90 140 92 Q180 96 175 142Z" fill="#2B2E31"/>${P.fire(128,140)}${P.person(200,138,'#8B6B4E','a-bob')}<g transform="translate(232,128)"><g class="a-bob2"><path d="M0 0 L-8 -22 L4 -30 L14 -20 L8 2Z" fill="${K.stone}" stroke="#555" stroke-width="2"/></g></g>${P.label(232,158,'주먹도끼')}${P.label(128,175,'불')}${P.tag(60,24,'구석기')}`},
+  {cap:'신석기 시대에는 농사를 짓기 시작해 한곳에 정착했어요. 움집을 짓고 빗살무늬 토기에 곡식을 저장했어요.',key:'신석기 = 농사 시작 · 움집 · 빗살무늬 토기 · 간석기',
+   svg:`${P.bg(K.sky,K.grass)}${P.sun(300,36)}${P.house(90,142,70,30,'#B08A55','#D9B77A')}${P.house(190,142,60,26,'#B08A55','#D9B77A')}<g transform="translate(270,140)"><g class="a-rise"><path d="M-16 -44 L16 -44 L6 4 L-6 4Z" fill="#B87A4B"/><g stroke="#6B3F1F" stroke-width="1.5">${[-36,-28,-20,-12].map(y=>`<path d="M-13 ${y} l6 5 l6 -5 l6 5 l6 -5"/>`).join('')}</g></g></g>${P.label(270,166,'빗살무늬 토기')}<g class="a-sway">${[20,32,44,56].map(x=>`<path d="M${x} 142 v-26 m0 4 l-5 -6 m5 0 l5 -6" stroke="#5E9A3C" stroke-width="3" fill="none"/>`).join('')}</g>${P.label(38,168,'농사')}${P.label(140,168,'움집')}${P.tag(60,24,'신석기')}`},
+  {cap:'청동기 시대에는 힘센 지배자가 나타났어요. 지배자의 무덤인 고인돌은 수백 명이 힘을 모아야 만들 수 있었어요.',key:'청동기 = 고인돌 · 비파형 동검 · 계급(지배자) 등장 · 벼농사',
+   svg:`${P.bg(K.sky,K.grass)}${P.sun(48,40)}<rect x="110" y="102" width="26" height="40" fill="${K.stone}"/><rect x="200" y="102" width="26" height="40" fill="${K.stone}"/><g class="a-drop"><rect x="92" y="78" width="152" height="26" rx="6" fill="#7E8489"/></g>${P.person(70,140,K.wood,'a-bob')}${P.person(262,140,K.wood,'a-bob2')}<g transform="translate(300,120)"><g class="a-float"><path d="M0 -40 L6 -12 L0 20 L-6 -12Z" fill="#7FA88E"/><rect x="-3" y="-12" width="6" height="8" fill="#5A4636"/></g></g>${P.label(300,165,'비파형 동검')}${P.label(168,172,'고인돌')}${P.tag(60,24,'청동기')}`},
+  {cap:'단군왕검이 우리 역사 최초의 나라 고조선을 세웠어요. 8조법으로 나라를 다스렸는데, 남을 다치게 하면 곡식으로 갚게 했어요.',key:'고조선 = 단군왕검 · 8조법 · 미송리식 토기 · 비파형 동검',
+   svg:`${P.bg(K.sky,K.grass)}${P.hill(170,220,70,'#A9C98F')}${P.person(170,138,'#B33A2B','a-bob',P.crown)}${P.label(170,166,'단군왕검')}<g transform="translate(70,130)"><g class="a-bob2"><ellipse rx="18" ry="14" fill="#5A4636"/><circle cx="-14" cy="-8" r="8" fill="#5A4636"/><circle cx="-15" cy="-9" r="1.5" fill="#fff"/></g></g>${P.label(70,166,'곰')}<g transform="translate(272,130)"><g class="a-bob"><ellipse rx="18" ry="13" fill="#E0A526"/><g stroke="#333" stroke-width="2"><path d="M-8 -10 v20 M0 -12 v24 M8 -10 v20"/></g><circle cx="14" cy="-6" r="8" fill="#E0A526"/></g></g>${P.label(272,166,'호랑이')}${P.scroll(170,60,'8조법|사람을 죽이면 사형|다치게 하면 곡식으로')}`}
+ ],
+ 2:[
+  {cap:'고구려·백제·신라 세 나라가 한반도에서 힘을 겨뤘어요. 고구려는 북쪽, 백제는 서남쪽, 신라는 동남쪽에 있었어요.',key:'삼국 위치: 고구려(북) · 백제(서남) · 신라(동남) + 가야',
+   svg:`<rect width="340" height="200" fill="${K.sea}"/>${P.map(`<g class="a-pop"><path d="M120 20 L200 12 L238 60 L226 90 L150 100 L112 80Z" fill="#C8412B" opacity=".85"/></g><g class="a-pop d1"><path d="M150 100 L184 96 L190 190 L176 190 L142 170 L128 130Z" fill="#2F7A5A" opacity=".85"/></g><g class="a-pop d2"><path d="M184 96 L226 90 L212 170 L190 190Z" fill="#E0A526" opacity=".9"/></g>`)}${P.label(172,60,'고구려','#fff')}${P.label(160,150,'백제','#fff')}${P.label(206,140,'신라','#fff')}${P.label(178,182,'가야','#22303F')}${P.tag(60,24,'삼국 시대')}`},
+  {cap:'고구려는 광개토대왕 때 영토를 크게 넓혔어요. 고구려 무덤 벽화에는 말을 타고 사냥하는 씩씩한 모습이 그려져 있어요.',key:'고구려 = 광개토대왕(영토 확장) · 광개토대왕릉비 · 고분 벽화(무용총 수렵도)',
+   svg:`${P.bg('#E7D3B2','#C9A66B')}<rect x="20" y="20" width="300" height="122" fill="#D9B98A" stroke="#8B6B4E" stroke-width="3"/>${P.horse(120,112,"#5A4636","#C8412B",'<path d="M8 -20 l30 -12" stroke="#333" stroke-width="2"/><path d="M36 -40 a12 12 0 0 1 4 16" stroke="#333" stroke-width="2" fill="none"/>')}<g transform="translate(240,86)"><g class="a-bob2"><ellipse rx="16" ry="10" fill="#A67C52"/><path d="M-14 -4 l-8 -12 M14 -4 l8 -12" stroke="#A67C52" stroke-width="3"/></g></g><g transform="translate(300,70)"><rect x="-10" y="-50" width="20" height="60" fill="#6E6E6E"/>${P.label(0,30,'광개토대왕릉비')}</g>${P.tag(60,24,'고구려')}`},
+  {cap:'백제는 금동대향로처럼 화려한 예술품을 남겼고, 신라는 금관과 첨성대(별 관측대)로 유명해요.',key:'백제 = 금동대향로 · 무령왕릉 / 신라 = 금관 · 첨성대 · 화랑',
+   svg:`${P.bg(K.sky,K.grass)}<g transform="translate(70,140)"><g class="a-rise"><path d="M-18 0 h36 l-8 -30 l6 -20 h-32 l6 20z" fill="#B5892E"/><circle cy="-58" r="10" fill="#B5892E"/><path d="M-4 -66 q4 -12 8 0" stroke="#C8412B" stroke-width="3" fill="none"/></g></g>${P.label(70,166,'금동대향로')}${P.label(70,182,'(백제)')}<g transform="translate(170,140)"><g class="a-rise d1"><rect x="-26" y="-30" width="52" height="30" rx="4" fill="#E0A526"/><path d="M-20 -30 v-20 l6 6 v-12 l6 6 v-10 M0 -30 v-30 M20 -30 v-20 l-6 6 v-12 l-6 6 v-10" stroke="#E0A526" stroke-width="5" fill="none"/><g fill="#7FA88E">${[-18,-6,6,18].map(x=>`<ellipse cx="${x}" cy="-14" rx="3" ry="5"/>`).join('')}</g></g></g>${P.label(170,166,'금관')}${P.label(170,182,'(신라)')}<g transform="translate(272,142)"><g class="a-rise d2"><path d="M-24 0 h48 l-10 -60 h-28z" fill="#B7BCC2"/>${[-10,-20,-30,-40,-50].map(y=>`<line x1="-22" x2="22" y1="${y}" y2="${y}" stroke="#8A9096" stroke-width="1.5"/>`).join('')}<rect x="-14" y="-70" width="28" height="10" fill="#8A9096"/></g></g><g class="a-flicker"><circle cx="300" cy="30" r="3" fill="#fff"/><circle cx="280" cy="50" r="2" fill="#fff"/><circle cx="320" cy="60" r="2" fill="#fff"/></g>${P.label(272,166,'첨성대')}${P.label(272,182,'(신라)')}`},
+  {cap:'신라가 삼국을 통일했고, 북쪽에는 고구려 후손 대조영이 발해를 세웠어요. 통일신라는 불국사와 석굴암을 지었어요.',key:'통일신라(불국사·석굴암·다보탑) + 발해(대조영, 고구려 계승) = 남북국 시대',
+   svg:`<rect width="340" height="200" fill="${K.sea}"/>${P.map(`<g class="a-pop"><path d="M120 20 L200 12 L238 60 L226 90 L150 100 L112 80Z" fill="#7B4FA0" opacity=".85"/></g><g class="a-pop d1"><path d="M150 100 L226 90 L212 170 L176 190 L142 170 L128 130Z" fill="#E0A526" opacity=".9"/></g>`)}${P.label(172,60,'발해','#fff')}${P.label(178,150,'통일신라','#22303F')}<g transform="translate(60,120)"><g class="a-rise d2"><rect x="-22" y="0" width="44" height="6" fill="#8A9096"/><rect x="-16" y="-14" width="32" height="14" fill="#B7BCC2"/><rect x="-12" y="-28" width="24" height="14" fill="#B7BCC2"/><rect x="-8" y="-42" width="16" height="14" fill="#B7BCC2"/><path d="M-6 -42 l6 -12 l6 12" fill="#8A9096"/></g></g>${P.label(60,150,'다보탑')}${P.label(60,166,'(불국사)')}<g transform="translate(290,120)"><g class="a-rise d3"><path d="M-30 20 a30 30 0 0 1 60 0z" fill="#8A9096"/><circle cy="4" r="10" fill="#E0A526"/></g></g>${P.label(290,150,'석굴암')}`}
+ ],
+ 3:[
+  {cap:'왕건이 고려를 세우고 후삼국을 통일했어요. 고려는 고구려를 잇는다는 뜻이고, 영어 이름 코리아(Korea)가 여기서 나왔어요.',key:'왕건(태조) = 고려 건국(918) · 후삼국 통일(936) · 훈요 10조',
+   svg:`${P.bg(K.sky,K.grass)}${P.hill(100,200,60,'#A9C98F')}${P.hill(260,200,80,'#8FBF7A')}${P.person(170,138,'#2E4A8B','a-bob',P.crown)}${P.label(170,166,'왕건')}${P.flag(100,140,'#2E4A8B')}${P.flag(240,140,'#2E4A8B')}<g class="a-pop d1">${P.scroll(170,58,'고려|고구려를 잇는다|Korea의 뿌리')}</g>${P.tag(60,24,'고려 건국')}`},
+  {cap:'고려는 비취색 고려청자를 만들었어요. 그릇 표면을 파내고 다른 흙을 채우는 상감 기법은 고려만의 특별한 기술이었어요.',key:'고려청자(상감 기법) · 세계에 알려진 고려 문화 · 벽란도 국제 무역',
+   svg:`${P.bg('#EEF5EA',K.dirt)}<g transform="translate(170,140)"><g class="a-rise"><path d="M-26 0 h52 c6 -20 10 -50 -4 -70 c-4 -8 -8 -10 -6 -22 h-32 c2 12 -2 14 -6 22 c-14 20 -10 50 -4 70z" fill="#7FA88E"/><g class="a-flicker"><circle cx="-8" cy="-40" r="5" fill="#fff" opacity=".8"/><circle cx="8" cy="-52" r="4" fill="#fff" opacity=".8"/><circle cx="6" cy="-28" r="4" fill="#fff" opacity=".8"/><path d="M-14 -36 q6 -4 10 0 M4 -24 q6 -4 10 0" stroke="#333" stroke-width="1.5" fill="none"/></g></g></g>${P.label(170,166,'고려청자(상감 기법)')}${P.boat(60,120)}${P.label(60,150,'벽란도')}${P.boat(290,120,'a-float d1')}${P.tag(60,24,'고려 문화')}`},
+  {cap:'부처의 힘으로 몽골을 물리치려고 팔만대장경을 만들었고, 세계에서 가장 오래된 금속 활자로 찍은 책 직지도 고려 것이에요.',key:'팔만대장경(해인사) · 직지심체요절(금속 활자, 세계 최고) · 몽골 침입',
+   svg:`${P.bg('#F4ECD6',K.wood)}<g class="a-pop">${[0,1,2,3,4,5].map(i=>`<rect x="${30+i*18}" y="60" width="14" height="80" fill="#8B6B4E" stroke="#5A4636"/>`).join('')}</g>${P.label(75,166,'팔만대장경')}<g transform="translate(240,100)"><g class="a-rise d1"><rect x="-50" y="-40" width="100" height="80" fill="#FBF2D9" stroke="#B89B5A" stroke-width="2"/><g class="a-pop d2">${[[-30,-20],[-10,-20],[10,-20],[30,-20],[-30,0],[-10,0],[10,0],[30,0],[-30,20],[-10,20]].map(([x,y])=>`<rect x="${x-7}" y="${y-7}" width="14" height="14" fill="#5A4636"/>`).join('')}</g></g></g>${P.label(240,166,'직지(금속 활자)')}`},
+  {cap:'몽골이 쳐들어오자 고려는 수도를 강화도로 옮기고 오랫동안 저항했어요. 삼별초는 끝까지 항쟁했지요.',key:'몽골 침입 → 강화도 천도 · 삼별초 항쟁 · 김윤후(처인성)',
+   svg:`${P.bg(K.sky,K.sea)}<path d="M0 142 h340 v58 h-340z" fill="${K.sea2}"/>${P.wave(150,K.sea)}<g transform="translate(200,145)"><path d="M-60 0 q60 -50 120 0z" fill="#8FBF7A"/>${P.house(0,-14,40,18,'#8B6B4E','#FBF2D9')}</g>${P.label(200,180,'강화도','#fff')}<path d="M-20 142 q80 -30 160 0z" fill="#C9A66B"/>${P.horse(60,128,"#5A4636","#333")}${P.label(60,176,'몽골군')}${P.tag(60,24,'몽골 침입')}`}
+ ],
+ 4:[
+  {cap:'이성계가 조선을 세우고 한양(서울)을 수도로 삼았어요. 경복궁, 종묘, 사직단 같은 건물은 유교의 가르침에 따라 배치했어요.',key:'조선 건국(1392, 이성계) · 한양 천도 · 경복궁·종묘 · 유교(성리학) 국가',
+   svg:`${P.bg(K.sky,K.grass)}${P.hill(170,260,90,'#A9C98F')}<g transform="translate(170,142)"><g class="a-rise"><rect x="-60" y="-40" width="120" height="40" fill="#C8412B"/><path d="M-70 -40 q70 -30 140 0z" fill="#22303F"/><rect x="-10" y="-24" width="20" height="24" fill="#5A4636"/><g fill="#2F7A5A">${[-44,-24,24,44].map(x=>`<rect x="${x-6}" y="-30" width="12" height="16"/>`).join('')}</g></g></g>${P.label(170,166,'경복궁')}${P.person(60,138,'#5A6E9A','a-bob',P.gat)}${P.person(280,138,'#8B4A6B','a-bob2',P.gat)}${P.tag(60,24,'조선 건국')}`},
+  {cap:'세종대왕은 백성이 글을 몰라 억울한 일을 당하지 않도록 훈민정음(한글)을 만들었어요. 장영실은 해시계·물시계·측우기를 만들었어요.',key:'세종 = 훈민정음(1443 창제·1446 반포) · 앙부일구(해시계) · 자격루(물시계) · 측우기 · 4군 6진',
+   svg:`${P.bg('#FBF2D9','#E8DFC0')}${P.person(70,138,'#B33A2B','a-bob',P.crown)}${P.label(70,166,'세종대왕')}<g font-size="30" font-weight="800" fill="#22303F">${['ㄱ','ㄴ','ㅁ','ㅅ','ㅇ','ㅏ','ㅗ','ㅣ'].map((c,i)=>`<g class="a-pop d${i%4}"><text x="${125+(i%4)*46}" y="${i<4?70:118}" text-anchor="middle">${c}</text></g>`).join('')}</g>${P.label(215,145,'훈민정음 — 백성을 가르치는 바른 소리')}<g transform="translate(290,150)"><g class="a-rise d2"><path d="M-20 0 a20 20 0 0 1 40 0z" fill="#8A9096"/><line x1="0" y1="0" x2="12" y2="-16" stroke="#333" stroke-width="2"/></g></g>${P.label(290,176,'앙부일구')}${P.tag(60,24,'세종 시대')}`},
+  {cap:'조선은 유교를 따랐어요. 부모에게 효도하고 제사를 지냈고, 신분은 양반·중인·상민·천민으로 나뉘었어요. 아이들은 서당에서 공부했어요.',key:'유교 문화: 효·제사·삼강오륜 · 신분(양반·중인·상민·천민) · 서당·향교·성균관 · 경국대전',
+   svg:`${P.bg(K.sky,K.grass)}<g class="a-pop"><path d="M170 30 L200 70 L140 70Z" fill="#2E4A8B"/></g><g class="a-pop d1"><path d="M140 72 L200 72 L215 100 L125 100Z" fill="#5A6E9A"/></g><g class="a-pop d2"><path d="M125 102 L215 102 L230 130 L110 130Z" fill="#8FA3C9"/></g><g class="a-pop d3"><path d="M110 132 L230 132 L245 160 L95 160Z" fill="#C3CFE6"/></g>${P.label(170,58,'양반','#fff')}${P.label(170,90,'중인','#fff')}${P.label(170,120,'상민')}${P.label(170,150,'천민')}${P.person(50,138,'#5A6E9A','a-bob',P.gat)}${P.label(50,166,'훈장님')}${P.person(290,140,'#8FA3C9','a-bob2')}${P.label(290,166,'서당 학생')}${P.tag(60,24,'유교와 신분')}`},
+  {cap:'임진왜란 때 이순신 장군이 거북선과 학익진으로 바다를 지켰고, 곽재우 같은 의병도 싸웠어요. 병자호란 때는 남한산성에서 청과 싸웠어요.',key:'임진왜란(1592, 일본): 이순신·거북선·한산도 대첩·의병·권율(행주) / 병자호란(1636, 청): 남한산성',
+   svg:`${P.bg(K.sky,K.sea)}<rect y="142" width="340" height="58" fill="${K.sea2}"/>${P.wave(150,K.sea)}<g transform="translate(150,135)"><g class="a-float"><path d="M-50 0 h100 l-10 14 h-80z" fill="#5A4636"/><path d="M-40 0 a40 22 0 0 1 80 0z" fill="#2F7A5A"/><g fill="#8A9096">${[-30,-15,0,15,30].map(x=>`<path d="M${x} -22 l3 -8 l3 8z"/>`).join('')}</g><path d="M40 -6 l12 -6 l0 8z" fill="#E0A526"/><circle cx="46" cy="-8" r="3" fill="#333"/></g></g>${P.label(150,178,'거북선','#fff')}<path d="M240 142 q50 -30 100 0z" fill="#8FBF7A"/>${P.person(290,128,'#B33A2B','a-bob',P.gat)}${P.label(290,172,'이순신','#fff')}<g class="a-slide2"><g transform="translate(40,110)">${P.boat(0,0,'')}</g></g>${P.label(40,150,'일본 수군','#fff')}${P.tag(60,24,'임진왜란')}`}
+ ],
+ 5:[
+  {cap:'조선 후기, 백성의 삶에 실제로 도움이 되는 실학이 유행했어요. 정약용은 거중기를 만들어 정조의 수원 화성을 빨리 짓게 했어요.',key:'실학(정약용·박지원·유형원) · 정조(규장각·수원 화성) · 거중기 · 영조 탕평책',
+   svg:`${P.bg(K.sky,K.grass)}<g transform="translate(170,142)"><rect x="-90" y="-50" width="180" height="50" fill="#9AA0A6"/><path d="M-90 -50 h180 l-6 -10 h-168z" fill="#6E6E6E"/><g fill="#7E8489">${[-70,-40,-10,20,50].map(x=>`<rect x="${x}" y="-66" width="16" height="16"/>`).join('')}</g></g><g transform="translate(60,100)"><path d="M-30 42 L0 -40 L30 42" stroke="#5A4636" stroke-width="5" fill="none"/><g class="a-lift"><line x1="0" y1="-40" x2="0" y2="0" stroke="#333" stroke-width="2"/><rect x="-14" y="0" width="28" height="18" fill="#7E8489"/></g></g>${P.label(60,166,'거중기')}${P.label(170,166,'수원 화성')}${P.person(290,138,'#B33A2B','a-bob',P.crown)}${P.label(290,166,'정조')}${P.tag(60,24,'실학과 정조')}`},
+  {cap:'서민 문화가 발달했어요. 판소리와 탈춤을 즐기고, 김홍도·신윤복의 풍속화와 홍길동전 같은 한글 소설이 인기였어요.',key:'서민 문화: 판소리 · 탈춤 · 풍속화(김홍도·신윤복) · 한글 소설(홍길동전) · 민화',
+   svg:`${P.bg('#FBF2D9',K.dirt)}<circle cx="170" cy="150" r="60" fill="#E8DFC0"/>${P.person(170,120,'#C8412B','a-dance')}<g transform="translate(170,120)"><g class="a-dance"><ellipse cy="-22" rx="11" ry="12" fill="#E0A526"/><circle cx="-4" cy="-24" r="2" fill="#333"/><circle cx="4" cy="-24" r="2" fill="#333"/><path d="M-5 -18 q5 5 10 0" stroke="#333" stroke-width="2" fill="none"/></g></g>${P.label(170,166,'탈춤')}${P.person(80,138,'#5A6E9A','a-bob',P.gat)}<g transform="translate(96,108)"><g class="a-bob2"><circle r="8" fill="#5A4636"/><line x1="8" y1="0" x2="18" y2="-10" stroke="#5A4636" stroke-width="3"/></g></g>${P.label(80,166,'판소리(북)')}<g transform="translate(270,110)"><g class="a-rise d1"><rect x="-30" y="-36" width="60" height="70" fill="#FBF2D9" stroke="#B89B5A" stroke-width="2"/><text y="-8" font-size="11" font-weight="800" text-anchor="middle" fill="#22303F">홍길동전</text><text y="12" font-size="9" text-anchor="middle" fill="#5B6675">한글 소설</text></g></g>${P.tag(60,24,'서민 문화')}`},
+  {cap:'1876년 강화도 조약으로 조선은 문을 열었어요(개항). 흥선 대원군은 문을 닫으려 했지만, 결국 외국 배들이 드나들게 되었어요.',key:'흥선 대원군(척화비, 경복궁 중건) → 강화도 조약(1876, 개항) → 갑신정변 · 동학 농민 운동 · 갑오개혁',
+   svg:`${P.bg(K.sky,K.sea)}<rect y="142" width="340" height="58" fill="${K.sea2}"/>${P.wave(150,K.sea)}<g class="a-slide2"><g transform="translate(90,120)"><g><path d="M-44 0 h88 l-10 16 h-68z" fill="#333"/><rect x="-6" y="-34" width="12" height="34" fill="#555"/><g class="a-float"><circle cx="0" cy="-46" r="8" fill="#9AA0A6" opacity=".7"/><circle cx="8" cy="-58" r="6" fill="#9AA0A6" opacity=".5"/></g></g></g></g>${P.label(90,160,'증기선','#fff')}<g transform="translate(260,142)"><path d="M-60 0 q60 -40 120 0z" fill="#8FBF7A"/><g transform="translate(0,-12)"><rect x="-8" y="-40" width="16" height="40" fill="#6E6E6E"/><text y="-14" font-size="7" font-weight="800" text-anchor="middle" fill="#fff">척화비</text></g></g>${P.label(260,180,'강화도','#fff')}${P.tag(60,24,'개항')}`},
+  {cap:'개항 뒤 전등, 전차, 기차, 서양식 병원과 학교 같은 근대 문물이 들어왔어요. 독립신문이 나오고 독립문이 세워졌어요.',key:'근대 문물: 전차·전등·기차(경인선)·전화 · 독립신문·독립협회·독립문 · 대한제국(1897)',
+   svg:`${P.bg('#F1E6D0','#7E8489')}<line x1="0" y1="152" x2="340" y2="152" stroke="#333" stroke-width="3"/><g class="a-slide2"><g transform="translate(120,140)"><rect x="-50" y="-30" width="100" height="30" rx="4" fill="#2E4A8B"/><g fill="#DCEFF7">${[-40,-20,0,20].map(x=>`<rect x="${x}" y="-24" width="14" height="12"/>`).join('')}</g><circle cx="-30" cy="4" r="5" fill="#333"/><circle cx="30" cy="4" r="5" fill="#333"/><line x1="0" y1="-30" x2="0" y2="-46" stroke="#333" stroke-width="2"/></g></g><line x1="0" y1="106" x2="340" y2="106" stroke="#555" stroke-width="1.5"/>${P.label(120,178,'전차','#fff')}<g transform="translate(60,100)"><line y1="0" y2="42" stroke="#333" stroke-width="3"/><g class="a-flicker"><circle cy="-6" r="9" fill="#F6D77A"/></g></g>${P.label(60,178,'전등','#fff')}<g transform="translate(270,142)"><g class="a-rise d1"><rect x="-34" y="-60" width="68" height="60" fill="#C3CFE6"/><path d="M-14 0 v-32 a14 14 0 0 1 28 0 v32z" fill="#E7EEF7"/></g></g>${P.label(270,178,'독립문','#fff')}${P.tag(60,24,'근대 문물')}`}
+ ],
+ 6:[
+  {cap:'1910년 일제가 우리 국권을 빼앗았어요. 헌병 경찰이 감시하고, 토지 조사로 땅을 빼앗고, 쌀을 가져갔어요.',key:'국권 피탈(1910) · 헌병 경찰 통치 · 토지 조사 사업 · 산미 증식 계획(쌀 수탈)',
+   svg:`${P.bg('#C9CFD6','#8A9096')}<g class="a-pop"><rect x="20" y="40" width="300" height="102" fill="#6E6E6E"/><g stroke="#333" stroke-width="3">${[40,80,120,160,200,240,280].map(x=>`<line x1="${x}" y1="40" x2="${x}" y2="142"/>`).join('')}</g></g>${P.person(150,138,'#FBF2D9','a-bob')}${P.person(200,138,'#FBF2D9','a-bob2')}<g transform="translate(270,140)"><g class="a-bob"><circle cy="-22" r="8" fill="#F2C9A0"/><rect x="-10" y="-32" width="20" height="8" fill="#333"/><rect x="-9" y="-13" width="18" height="24" rx="4" fill="#333"/><line x1="12" y1="-10" x2="12" y2="-46" stroke="#555" stroke-width="3"/></g></g>${P.label(270,166,'헌병 경찰')}<g transform="translate(70,110)"><g class="a-drop"><rect x="-24" y="-20" width="48" height="30" rx="4" fill="#E8DFC0"/><text y="0" font-size="9" font-weight="800" text-anchor="middle">쌀</text></g></g>${P.label(70,166,'수탈')}${P.tag(60,24,'일제 강점')}`},
+  {cap:'1919년 3월 1일, 온 나라 사람들이 태극기를 들고 "대한 독립 만세"를 외쳤어요. 유관순은 학생이었지만 앞장섰어요.',key:'3·1 운동(1919) · 독립 선언서 · 유관순 · 이후 대한민국 임시정부 수립(상하이)',
+   svg:`${P.bg('#FBF2D9',K.dirt)}${[40,90,140,190,240,290].map((x,i)=>P.person(x,138,['#C8412B','#2E4A8B','#5A6E9A','#8B4A6B','#2F7A5A','#B33A2B'][i],i%2?'a-bob':'a-bob2')).join('')}${[40,90,140,190,240,290].map((x,i)=>`<g transform="translate(${x+14},${118})">${P.flag(0,0,'#fff')}</g>`).join('')}<g class="a-pop"><text x="170" y="50" font-size="22" font-weight="800" text-anchor="middle" fill="#C8412B">대한 독립 만세!</text></g>${P.tag(60,24,'3·1 운동')}`},
+  {cap:'상하이에 대한민국 임시정부가 세워졌고, 독립군은 봉오동·청산리에서 일본군을 크게 이겼어요. 한국광복군도 만들어졌어요.',key:'임시정부(김구) · 봉오동 전투(홍범도) · 청산리 대첩(김좌진) · 한인 애국단(윤봉길·이봉창) · 한국광복군',
+   svg:`${P.bg(K.sky,'#8FBF7A')}${P.hill(80,180,80,'#5E9A3C')}${P.hill(260,200,90,'#4C8A30')}${P.horse(120,122,"#5A4636","#2F7A5A")}${P.label(120,160,'독립군')}${P.flag(220,140,'#fff')}${P.person(260,138,'#333','a-bob',P.gat)}${P.label(260,166,'김구')}<g class="a-pop d1">${P.scroll(250,50,'대한민국|임시정부|(상하이, 1919)')}</g>${P.tag(60,24,'독립운동')}`},
+  {cap:'일제는 우리 말과 글을 못 쓰게 하고 이름까지 일본식으로 바꾸게 했어요. 하지만 사람들은 몰래 한글을 지키고 우리 역사를 가르쳤어요.',key:'민족 말살 정책: 창씨개명 · 우리말 금지 · 신사 참배 / 저항: 조선어 학회(한글 사전) · 신채호(역사)',
+   svg:`${P.bg('#FBF2D9','#E8DFC0')}<g class="a-pop"><rect x="30" y="40" width="120" height="100" fill="#fff" stroke="#B89B5A" stroke-width="2"/><text x="90" y="70" font-size="12" font-weight="800" text-anchor="middle">우리말 사전</text><text x="90" y="92" font-size="10" text-anchor="middle" fill="#5B6675">ㄱ ㄴ ㄷ ㄹ</text><text x="90" y="110" font-size="10" text-anchor="middle" fill="#5B6675">ㅁ ㅂ ㅅ ㅇ</text></g>${P.label(90,166,'조선어 학회')}${P.person(220,138,'#5A6E9A','a-bob')}${P.person(270,138,'#8B4A6B','a-bob2')}<g class="a-flicker"><rect x="196" y="40" width="100" height="40" rx="6" fill="#C8412B"/><text x="246" y="58" font-size="10" font-weight="800" text-anchor="middle" fill="#fff">우리말 금지</text><text x="246" y="72" font-size="10" font-weight="800" text-anchor="middle" fill="#fff">창씨개명</text></g>${P.label(245,166,'몰래 한글 공부')}${P.tag(60,24,'말과 글 지키기')}`}
+ ],
+ 7:[
+  {cap:'1945년 8월 15일, 일본이 항복하고 우리는 광복을 맞았어요. 사람들이 거리로 나와 태극기를 흔들며 기뻐했어요.',key:'8·15 광복(1945) · 미·소 군정 · 신탁 통치 논쟁',
+   svg:`${P.bg('#DCEFF7',K.dirt)}${P.sun(300,36)}${[50,110,170,230,290].map((x,i)=>P.person(x,138,['#C8412B','#2E4A8B','#2F7A5A','#E0A526','#8B4A6B'][i],i%2?'a-bob':'a-bob2')).join('')}${[50,110,170,230,290].map(x=>`<g transform="translate(${x+14},118)">${P.flag(0,0,'#fff')}</g>`).join('')}<g class="a-pop"><text x="170" y="52" font-size="24" font-weight="800" text-anchor="middle" fill="#2E4A8B">광복!</text><text x="170" y="72" font-size="11" text-anchor="middle" fill="#22303F">1945년 8월 15일</text></g>`},
+  {cap:'기쁨도 잠시, 38도선을 기준으로 남쪽에는 미군, 북쪽에는 소련군이 들어왔어요. 1948년 남쪽에 대한민국 정부가 세워졌어요.',key:'38도선 분단 · 5·10 총선거 → 대한민국 정부 수립(1948.8.15) · 북한 정권 수립',
+   svg:`<rect width="340" height="200" fill="${K.sea}"/>${P.map(`<path d="M120 20 L200 12 L238 60 L226 90 L150 100 L112 80Z" fill="#C8412B" opacity=".7"/><path d="M150 100 L226 90 L212 170 L176 190 L142 170 L128 130Z" fill="#2E4A8B" opacity=".7"/>`)}<g class="a-dash"><line x1="100" y1="96" x2="250" y2="92" stroke="#22303F" stroke-width="4" stroke-dasharray="10 6"/></g>${P.label(280,98,'38도선')}${P.label(172,58,'북','#fff')}${P.label(178,150,'남','#fff')}<g class="a-pop d1">${P.scroll(70,150,'대한민국|정부 수립|1948. 8. 15')}</g>`},
+  {cap:'1950년 6월 25일 북한군이 쳐들어와 전쟁이 시작됐어요. 국군과 유엔군은 인천 상륙 작전으로 다시 서울을 되찾았어요.',key:'6·25 전쟁(1950) · 낙동강 방어 · 인천 상륙 작전(맥아더, 유엔군) · 중국군 개입 · 1·4 후퇴',
+   svg:`<rect width="340" height="200" fill="${K.sea}"/>${P.map(`<path d="M120 20 L200 12 L238 60 L226 90 L150 100 L112 80Z" fill="#E8DFC0"/><path d="M150 100 L226 90 L212 170 L176 190 L142 170 L128 130Z" fill="#E8DFC0"/>`)}<g class="a-down"><path d="M180 40 L180 120" stroke="#C8412B" stroke-width="6" stroke-linecap="round"/><path d="M170 108 L180 124 L190 108" stroke="#C8412B" stroke-width="6" fill="none"/></g><g class="a-in"><path d="M60 120 L150 112" stroke="#2E4A8B" stroke-width="6" stroke-linecap="round"/><path d="M136 100 L154 112 L136 122" stroke="#2E4A8B" stroke-width="6" fill="none"/></g>${P.boat(50,150,'a-float')}${P.label(50,180,'인천 상륙 작전','#22303F')}${P.label(230,60,'북한군 남침','#C8412B')}${P.tag(60,24,'6·25 전쟁')}`},
+  {cap:'1953년 휴전이 되었지만 남북은 휴전선으로 나뉘었어요. 전쟁으로 집과 공장이 부서지고, 가족이 헤어진 이산가족이 많이 생겼어요.',key:'정전 협정(1953.7) · 휴전선 · 이산가족 · 전쟁 고아 · 폐허 복구',
+   svg:`${P.bg('#C9CFD6','#8A9096')}<g class="a-pop"><path d="M40 142 v-50 h20 v20 h20 v-40 h20 v70z" fill="#5C5F63"/><path d="M220 142 v-30 h30 v-50 h20 v80z" fill="#5C5F63"/></g><g class="a-dash"><line x1="0" y1="90" x2="340" y2="90" stroke="#C8412B" stroke-width="3" stroke-dasharray="8 6"/></g>${P.label(170,84,'휴전선','#C8412B')}${P.person(140,138,'#5A6E9A','a-bob')}${P.person(200,138,'#8B4A6B','a-bob2')}<g class="a-flicker"><text x="170" y="120" font-size="16" text-anchor="middle">💔</text></g>${P.label(170,166,'이산가족')}${P.tag(60,24,'휴전')}`}
+ ],
+ 8:[
+  {cap:'전쟁 뒤 우리나라는 공장을 세우고 경부고속도로를 놓으며 빠르게 산업화했어요. 농촌에서는 새마을 운동이 펼쳐졌어요.',key:'산업화: 경제 개발 5개년 계획 · 경부고속도로(1970) · 수출 · 새마을 운동 · 도시로 인구 이동',
+   svg:`${P.bg(K.sky,'#8A9096')}<g class="a-rise">${[60,110,160].map((x,i)=>`<rect x="${x-20}" y="${70+i*10}" width="40" height="${72-i*10}" fill="#5A6E9A"/><rect x="${x-4}" y="${50+i*10}" width="8" height="24" fill="#333"/>`).join('')}</g><g class="a-float"><circle cx="66" cy="42" r="8" fill="#C9CFD6" opacity=".7"/><circle cx="116" cy="54" r="7" fill="#C9CFD6" opacity=".7"/></g><line x1="0" y1="170" x2="340" y2="170" stroke="#fff" stroke-width="2" stroke-dasharray="14 10"/><g class="a-slide2"><g transform="translate(250,160)"><rect x="-30" y="-20" width="60" height="20" rx="4" fill="#C8412B"/><rect x="-18" y="-32" width="36" height="14" rx="3" fill="#DCEFF7"/><circle cx="-18" cy="2" r="5" fill="#333"/><circle cx="18" cy="2" r="5" fill="#333"/></g></g>${P.label(250,192,'경부고속도로','#fff')}${P.label(110,192,'공장','#fff')}${P.tag(60,24,'산업화')}`},
+  {cap:'국민들은 민주주의를 위해 싸웠어요. 4·19 혁명, 5·18 민주화 운동, 6월 민주 항쟁을 거쳐 대통령을 국민이 직접 뽑게 되었어요.',key:'4·19 혁명(1960) · 5·18 민주화 운동(1980, 광주) · 6월 민주 항쟁(1987) → 대통령 직선제',
+   svg:`${P.bg('#FBF2D9',K.dirt)}${[60,120,180,240,300].map((x,i)=>P.person(x,138,['#2E4A8B','#C8412B','#2F7A5A','#8B4A6B','#E0A526'][i],i%2?'a-bob':'a-bob2')).join('')}${[60,120,180,240,300].map((x,i)=>`<g transform="translate(${x},96)"><g class="a-bob${i%2?'2':''}"><rect x="-22" y="-14" width="44" height="22" rx="4" fill="#fff" stroke="#22303F" stroke-width="2"/><text y="2" font-size="9" font-weight="800" text-anchor="middle">${['민주','자유','직선제','평화','인권'][i]}</text></g></g>`).join('')}<g class="a-pop"><text x="170" y="50" font-size="18" font-weight="800" text-anchor="middle" fill="#2E4A8B">4·19 → 5·18 → 6월 항쟁</text></g>${P.tag(60,24,'민주화')}`},
+  {cap:'생활도 크게 달라졌어요. 아파트에 살고, TV와 자동차가 흔해지고, 1988년에는 서울 올림픽을 열었어요.',key:'생활 변화: 아파트 · 가전제품 · 자가용 · 88 서울 올림픽 · 2002 월드컵 · 정보화(인터넷)',
+   svg:`${P.bg(K.sky,'#8FBF7A')}<g class="a-rise">${[70,130,190].map(x=>`<rect x="${x-22}" y="40" width="44" height="102" fill="#C3CFE6"/><g fill="#F6D77A">${[52,72,92,112].map(y=>`<rect x="${x-14}" y="${y}" width="10" height="10"/><rect x="${x+4}" y="${y}" width="10" height="10"/>`).join('')}</g>`).join('')}</g>${P.label(130,166,'아파트')}<g transform="translate(280,100)"><g class="a-pop d1"><g fill="none" stroke-width="4">${[[-24,0,'#2E4A8B'],[0,0,'#333'],[24,0,'#C8412B'],[-12,12,'#E0A526'],[12,12,'#2F7A5A']].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="10" stroke="${c}"/>`).join('')}</g></g></g>${P.label(280,140,'88 서울 올림픽')}${P.tag(60,24,'달라진 생활')}`},
+  {cap:'남북은 이산가족 상봉과 정상 회담으로 평화 통일을 위해 노력하고 있어요. 분단의 장소를 평화의 장소로 바꾸려는 노력도 계속돼요.',key:'남북 정상 회담(2000·2007·2018) · 이산가족 상봉 · 6·15 남북 공동 선언 · 비무장지대(DMZ) 평화 공원',
+   svg:`${P.bg(K.sky,'#8FBF7A')}${P.hill(170,300,60,'#A9C98F')}<g class="a-dash"><line x1="0" y1="120" x2="340" y2="120" stroke="#8A9096" stroke-width="3" stroke-dasharray="8 6"/></g>${P.person(130,138,'#2E4A8B','a-bob')}${P.person(210,138,'#C8412B','a-bob2')}<g class="a-pop d1"><path d="M139 122 h62" stroke="#22303F" stroke-width="5" stroke-linecap="round"/></g><g class="a-float"><text x="170" y="70" font-size="28" text-anchor="middle">🕊️</text></g>${P.label(170,166,'악수 — 평화 통일을 향해')}${P.tag(60,24,'평화 통일')}`}
+ ]
+};
+// ===== 6학년 확장 챕터 장면 =====
+Object.assign(SCENES,{
+ 9:[
+  {cap:'{name}, 남과 북은 70년 넘게 나뉘어 있어. 휴전선 근처 비무장지대(DMZ)에는 사람이 못 들어가서 오히려 동식물의 천국이 됐지.',key:'분단의 문제: 이산가족 · 군사비 부담 · 왕래 불가 / DMZ = 비무장지대',
+   svg:`${P.bg(K.sky,'#8FBF7A')}${P.hill(80,220,70,'#A9C98F')}${P.hill(260,240,90,'#5E9A3C')}<g class="a-dash"><line x1="0" y1="120" x2="340" y2="120" stroke="#C8412B" stroke-width="4" stroke-dasharray="10 8"/></g>${P.label(170,112,'휴전선','#C8412B')}<g transform="translate(120,150)"><g class="a-bob"><ellipse rx="10" ry="6" fill="#fff"/><path d="M8 -2 l8 -8 M-8 0 l-10 2" stroke="#333" stroke-width="2"/><circle cx="10" cy="-8" r="3" fill="#fff"/></g></g><g transform="translate(220,145)"><g class="a-bob2"><ellipse rx="14" ry="8" fill="#A67C52"/><path d="M-12 -4 l-8 -12 M12 -4 l8 -12" stroke="#A67C52" stroke-width="3"/></g></g>${P.label(170,180,'비무장지대(DMZ)')}${P.tag(60,24,'분단')}`},
+  {cap:'이산가족 상봉 행사에서는 수십 년 만에 가족을 다시 만나. {name}이 부모님을 60년 동안 못 본다면 어떤 마음일까?',key:'이산가족 상봉(1985 첫 상봉, 2000년 이후 정례화) · 분단이 개인의 삶에 준 아픔',
+   svg:`${P.bg('#FBF2D9',K.dirt)}${P.person(140,138,'#5A6E9A','a-bob')}${P.person(200,138,'#8B4A6B','a-bob2')}<g class="a-pop d1"><path d="M149 122 h42" stroke="#22303F" stroke-width="5" stroke-linecap="round"/></g><g class="a-float"><text x="170" y="70" font-size="30" text-anchor="middle">❤️</text></g>${P.label(170,166,'이산가족 상봉')}<g class="a-pop d2">${P.scroll(70,60,'60년 만의|만남')}</g>${P.tag(60,24,'이산가족')}`},
+  {cap:'2000년 남북 정상이 처음 만났어. 개성 공단에서 남북이 함께 일하고, 금강산에 관광도 갔지. 대화로 평화를 만들려는 노력이야.',key:'남북 정상 회담(2000·2007·2018) · 6·15 공동 선언 · 개성 공단 · 금강산 관광 · 남북 단일팀',
+   svg:`${P.bg(K.sky,'#8FBF7A')}${P.hill(170,320,70,'#A9C98F')}<g transform="translate(170,142)"><g class="a-rise"><rect x="-70" y="-46" width="140" height="46" fill="#C3CFE6"/><g fill="#5A6E9A">${[-56,-32,-8,16,40].map(x=>`<rect x="${x}" y="-36" width="16" height="12"/>`).join('')}</g><rect x="-14" y="-24" width="28" height="24" fill="#5A6E9A"/></g></g>${P.label(170,166,'개성 공단')}${P.person(60,138,'#2E4A8B','a-bob')}${P.person(280,138,'#C8412B','a-bob2')}${P.flag(80,120,'#fff')}${P.flag(300,120,'#fff')}${P.tag(60,24,'평화 통일 노력')}`},
+  {cap:'통일이 되면 기차로 유럽까지 갈 수 있고, 국방비가 줄고, 인구와 자원이 늘어. {name}이 할 수 있는 통일 준비는 뭘까? 관심 갖기, 북한 친구 이해하기!',key:'통일의 이점: 이산가족 문제 해결 · 경제 성장 · 대륙 철도 / 우리가 할 일: 관심·이해·평화 교육',
+   svg:`${P.bg(K.sky,'#8FBF7A')}<line x1="0" y1="152" x2="340" y2="152" stroke="#333" stroke-width="3"/><g class="a-slide2"><g transform="translate(150,142)"><rect x="-70" y="-30" width="140" height="30" rx="6" fill="#2E4A8B"/><g fill="#DCEFF7">${[-60,-40,-20,0,20,40].map(x=>`<rect x="${x}" y="-24" width="14" height="12"/>`).join('')}</g><circle cx="-50" cy="4" r="5" fill="#333"/><circle cx="-20" cy="4" r="5" fill="#333"/><circle cx="20" cy="4" r="5" fill="#333"/><circle cx="50" cy="4" r="5" fill="#333"/></g></g><g class="a-pop"><text x="170" y="60" font-size="14" font-weight="800" text-anchor="middle" fill="#22303F">부산 → 평양 → 유럽</text></g>${P.label(170,178,'대륙 횡단 열차')}${P.tag(60,24,'통일 한국')}`}
+ ],
+ 10:[
+  {cap:'{name}, 학급 회장을 어떻게 뽑았어? 그게 바로 선거야. 나라에서는 국민이 대통령과 국회의원을 뽑지. 선거의 4원칙 기억해 둬!',key:'선거의 4원칙: 보통·평등·직접·비밀 선거 / 선거권 만 18세',
+   svg:`${P.bg('#FBF2D9',K.dirt)}<g transform="translate(170,120)"><g class="a-rise"><rect x="-40" y="-30" width="80" height="60" rx="6" fill="#2E4A8B"/><rect x="-24" y="-36" width="48" height="8" rx="2" fill="#22303F"/></g></g><g class="a-drop"><rect x="150" y="50" width="40" height="26" rx="3" fill="#fff" stroke="#22303F" stroke-width="2"/><text x="170" y="68" font-size="12" text-anchor="middle">✓</text></g>${P.label(170,166,'투표함')}${P.person(70,138,'#C8412B','a-bob')}${P.person(270,138,'#2F7A5A','a-bob2')}${P.tag(60,24,'선거')}`},
+  {cap:'나라의 힘을 셋으로 나눴어. 국회는 법을 만들고, 정부(대통령)는 법에 따라 나라 살림을 하고, 법원은 법으로 재판해. 왜 나눴을까? 한 곳이 다 가지면 위험하니까!',key:'삼권 분립: 국회(입법) · 정부/행정부(행정) · 법원(사법) → 권력 남용 방지',
+   svg:`${P.bg(K.sky,'#8FBF7A')}<g class="a-pop"><rect x="20" y="70" width="90" height="72" fill="#C3CFE6"/><path d="M14 70 l51 -26 l51 26z" fill="#5A6E9A"/></g><g class="a-pop d1"><rect x="125" y="70" width="90" height="72" fill="#C3CFE6"/><path d="M119 70 l51 -26 l51 26z" fill="#2E4A8B"/></g><g class="a-pop d2"><rect x="230" y="70" width="90" height="72" fill="#C3CFE6"/><path d="M224 70 l51 -26 l51 26z" fill="#C8412B"/></g>${P.label(65,110,'국회')}${P.label(65,126,'법 만들기')}${P.label(170,110,'정부')}${P.label(170,126,'나라 살림')}${P.label(275,110,'법원')}${P.label(275,126,'재판')}${P.tag(60,24,'삼권 분립')}`},
+  {cap:'국회의원은 법을 만들고 나라 예산을 살펴봐. 대통령은 나라를 대표하고, 법원은 다툼을 공정하게 판단해. 서로 감시하며 균형을 맞추는 거야.',key:'국회: 법률 제정·예산 심의·국정 감사 / 대통령: 국가 원수, 행정부 수반(5년 단임) / 법원: 3심 제도',
+   svg:`${P.bg('#FBF2D9',K.dirt)}<g class="a-rise"><path d="M170 60 l40 40 l-80 0z" fill="#E0A526"/><rect x="164" y="100" width="12" height="42" fill="#5A4636"/></g><g class="a-bob"><rect x="90" y="86" width="60" height="6" fill="#333"/><path d="M96 92 v14 h48 v-14" stroke="#333" stroke-width="3" fill="none"/></g><g class="a-bob2"><rect x="190" y="86" width="60" height="6" fill="#333"/><path d="M196 92 v14 h48 v-14" stroke="#333" stroke-width="3" fill="none"/></g>${P.label(120,130,'국회')}${P.label(220,130,'법원')}${P.label(170,166,'서로 견제, 균형')}${P.tag(60,24,'국가 기관')}`},
+  {cap:'뉴스, 유튜브, SNS도 민주주의에 중요해. 하지만 가짜 뉴스도 있으니 {name}은 "누가 만들었지? 근거가 있나?" 꼭 확인하는 습관을 갖자.',key:'미디어의 역할: 정보 전달·감시·여론 형성 / 비판적 이용: 출처·근거·다른 의견 확인',
+   svg:`${P.bg(K.sky,'#8FBF7A')}<g transform="translate(120,110)"><g class="a-rise"><rect x="-60" y="-40" width="120" height="80" rx="8" fill="#22303F"/><rect x="-52" y="-32" width="104" height="60" fill="#DCEFF7"/><text y="4" font-size="12" font-weight="800" text-anchor="middle" fill="#22303F">뉴스</text></g></g><g transform="translate(260,110)"><g class="a-rise d1"><rect x="-26" y="-50" width="52" height="100" rx="10" fill="#22303F"/><rect x="-20" y="-40" width="40" height="76" fill="#DCEFF7"/><text y="0" font-size="10" font-weight="800" text-anchor="middle" fill="#22303F">SNS</text></g></g><g class="a-flicker"><text x="200" y="60" font-size="18" text-anchor="middle">🤔</text></g>${P.label(190,180,'출처를 확인하자!')}${P.tag(60,24,'미디어')}`}
+ ],
+ 11:[
+  {cap:'{name}이 학용품을 사면 소비, 가게 주인이 파는 건 생산이야. 가정(가계)은 일해서 돈을 벌고 쓰고, 기업은 물건을 만들어 팔아. 이게 시장 경제!',key:'가계(소비·노동 제공) ↔ 기업(생산·일자리) · 시장 · 자유로운 경쟁 · 근로자 권리와 기업의 책임',
+   svg:`${P.bg('#FBF2D9',K.dirt)}${P.house(90,142,90,44,'#C8412B','#FBF2D9')}<text x="90" y="128" font-size="11" font-weight="800" text-anchor="middle">가게</text>${P.person(200,138,'#2E4A8B','a-bob')}<g class="a-slide2"><g transform="translate(150,110)"><rect x="-12" y="-10" width="24" height="20" rx="3" fill="#E0A526"/></g></g><g class="a-slide2"><g transform="translate(150,80)"><text font-size="12" font-weight="800" text-anchor="middle" fill="#2F7A5A">💰</text></g></g>${P.label(90,166,'기업(생산)')}${P.label(200,166,'가계(소비)')}${P.tag(60,24,'시장 경제')}`},
+  {cap:'물건값은 어떻게 정해질까? 사려는 사람이 많으면 값이 오르고, 팔려는 물건이 많으면 값이 내려. 딸기가 겨울에 비싼 이유야.',key:'가격 결정: 수요(사려는 양) ↑ → 가격 ↑ / 공급(팔려는 양) ↑ → 가격 ↓',
+   svg:`${P.bg('#FBF2D9','#E8DFC0')}<g transform="translate(170,110)"><g class="a-lift"><path d="M-40 0 h80" stroke="#5A4636" stroke-width="6"/><line x1="0" y1="0" x2="0" y2="40" stroke="#5A4636" stroke-width="6"/></g><g class="a-lift"><rect x="-60" y="-22" width="40" height="22" fill="#C8412B"/><text x="-40" y="-8" font-size="9" font-weight="800" text-anchor="middle" fill="#fff">수요</text></g><g class="a-lift"><rect x="20" y="-22" width="40" height="22" fill="#2E4A8B"/><text x="40" y="-8" font-size="9" font-weight="800" text-anchor="middle" fill="#fff">공급</text></g></g>${P.label(170,176,'저울처럼 균형 = 가격')}<g class="a-float"><text x="60" y="70" font-size="26" text-anchor="middle">🍓</text></g>${P.tag(60,24,'수요와 공급')}`},
+  {cap:'1960년대 우리나라는 가난했지만 열심히 물건을 만들어 수출했어. 옷·신발에서 시작해 배·자동차·반도체까지! 하지만 빈부 격차와 환경 문제도 생겼지.',key:'경제 성장 과정: 경공업(1960) → 중화학 공업(1970) → 첨단 산업(반도체·IT) / 문제: 빈부 격차·환경 오염·노동 문제',
+   svg:`${P.bg(K.sky,'#8A9096')}<g class="a-rise"><rect x="30" y="112" width="40" height="30" fill="#5A6E9A"/><rect x="90" y="92" width="40" height="50" fill="#5A6E9A"/><rect x="150" y="66" width="40" height="76" fill="#5A6E9A"/><rect x="210" y="40" width="40" height="102" fill="#2E4A8B"/></g><text x="50" y="160" font-size="9" font-weight="800" text-anchor="middle" fill="#fff">1960</text><text x="110" y="160" font-size="9" font-weight="800" text-anchor="middle" fill="#fff">1980</text><text x="170" y="160" font-size="9" font-weight="800" text-anchor="middle" fill="#fff">2000</text><text x="230" y="160" font-size="9" font-weight="800" text-anchor="middle" fill="#fff">지금</text>${P.label(50,104,'👕')}${P.label(110,84,'🚢')}${P.label(170,58,'🚗')}${P.label(230,32,'💾')}${P.tag(60,24,'경제 성장')}`},
+  {cap:'우리나라는 자원이 적어서 다른 나라와 물건을 사고팔아. 이걸 무역이라고 해. 반도체·자동차를 팔고, 석유·밀을 사 오지. 서로 잘 만드는 걸 바꾸는 거야!',key:'무역: 수출(팔기) · 수입(사기) / 무역 이유: 자원·기술·환경 차이 / 자유 무역과 무역 갈등',
+   svg:`${P.bg(K.sky,K.sea)}<rect y="142" width="340" height="58" fill="${K.sea2}"/>${P.wave(150,K.sea)}<g class="a-slide2"><g transform="translate(110,130)"><path d="M-50 0 h100 l-12 16 h-76z" fill="#333"/><g fill="#C8412B"><rect x="-40" y="-16" width="20" height="16"/><rect x="-16" y="-16" width="20" height="16"/><rect x="8" y="-16" width="20" height="16"/></g><rect x="30" y="-30" width="12" height="30" fill="#555"/></g></g>${P.label(110,180,'수출 (반도체·자동차)','#fff')}<g class="a-pop d1"><path d="M200 60 h80" stroke="#22303F" stroke-width="4"/><path d="M270 50 l12 10 l-12 10" stroke="#22303F" stroke-width="4" fill="none"/><path d="M280 90 h-80" stroke="#22303F" stroke-width="4"/><path d="M210 80 l-12 10 l12 10" stroke="#22303F" stroke-width="4" fill="none"/></g>${P.label(240,50,'수출')}${P.label(240,112,'수입 (석유·밀)')}${P.tag(60,24,'무역')}`}
+ ]
+});
+// 장면 사이에 학생에게 말 거는 질문
+const ASKS = {
+ 1:{after:2,q:'{name}, 고인돌을 만들려면 사람이 많이 필요했겠지? 그럼 이 시대엔 무엇이 생겼을까?',o:['모두가 똑같은 평등한 사회','사람을 부리는 힘센 지배자'],a:1,r:['잘 생각해 봐. 수백 명이 돌을 옮기려면 누군가 명령해야 하지 않을까? 그래서 이때 지배자, 즉 계급이 생겼어.','맞았어! 그래서 고인돌은 "계급이 생겼다"는 증거로 시험에 자주 나와.']},
+ 2:{after:1,q:'{name}이 삼국 중 한 나라 왕이라면, 다른 나라보다 먼저 하고 싶은 건?',o:['땅을 넓힌다','문화를 꽃피운다'],a:-1,r:['광개토대왕의 마음이구나! 고구려는 5세기에 가장 넓은 땅을 차지했어.','백제와 신라의 길이네. 금동대향로, 금관처럼 아름다운 유물이 남았지.']},
+ 3:{after:2,q:'팔만대장경은 글자가 8만 장 넘게 있는데 오타가 거의 없어. {name}은 왜 그렇게 정성을 들였다고 생각해?',o:['글씨 연습하려고','부처의 힘으로 나라를 지키려고'],a:1,r:['그것도 도움이 됐겠지만, 진짜 이유는 몽골을 물리치고 싶은 간절한 마음이었어.','정답! 간절한 마음이 담긴 거야. 시험엔 "몽골 침입 때 만들었다"가 포인트.']},
+ 4:{after:1,q:'{name}, 만약 한글이 없었다면 지금 이 화면의 글자는 어떻게 되어 있을까?',o:['전부 한자','영어'],a:0,r:['맞아! 한자를 못 배운 백성은 글을 읽을 수 없었어. 세종이 한글을 만든 이유야.','영어는 조선엔 없었지! 조선에선 한자를 썼는데, 배우기 어려워서 백성들은 글을 못 읽었어.']},
+ 5:{after:0,q:'거중기가 없다면 무거운 돌을 어떻게 올릴까? {name} 생각은?',o:['사람 수백 명이 밧줄로','도르래를 여러 개 써서'],a:1,r:['가능하지만 위험하고 돈이 많이 들어. 정약용은 도르래로 힘을 줄이는 거중기를 만들었지.','정약용과 똑같은 생각! 거중기 덕분에 화성을 예상보다 빨리, 싸게 지었어.']},
+ 6:{after:1,q:'1919년 3월 1일이야. {name}은 어디에 있을래?',o:['거리에서 만세를 외친다','밤새 몰래 태극기를 만든다'],a:-1,r:['용감해! 유관순처럼 수많은 학생이 거리로 나왔어.','정말 중요한 일이야. 누군가 태극기를 만들었기에 거리가 태극기로 덮일 수 있었지.']},
+ 7:{after:1,q:'광복은 1945년 8월 15일, 대한민국 정부 수립은? {name}, 헷갈리기 쉬운 문제야!',o:['1945년 8월 15일','1948년 8월 15일'],a:1,r:['날짜는 같은데 연도가 달라! 광복 3년 뒤인 1948년에 정부가 세워졌어. 시험 단골이야.','정확해! 날짜가 같아서 다들 헷갈리는데 {name}은 안 틀렸네.']},
+ 8:{after:1,q:'4·19, 5·18, 6월 항쟁. {name}, 이 세 사건의 공통점은?',o:['국민이 민주주의를 지키려 나섰다','왕을 세우려 했다'],a:0,r:['맞아. 세 번 모두 국민이 직접 나서서 민주주의를 지켰어. 순서도 기억해: 60년 → 80년 → 87년.','왕은 조선 시대까지! 이 사건들은 국민이 민주주의를 지키려고 나선 거야.']},
+ 9:{after:1,q:'{name}이 60년 동안 가족을 못 만난다면 어떨 것 같아?',o:['너무 슬프고 보고 싶을 것 같아','상상이 잘 안 돼'],a:-1,r:['그 마음이 바로 이산가족의 마음이야. 그래서 통일이 중요한 거지.','솔직해서 좋아. 실제로 겪은 분들의 이야기를 들으면 조금 느껴질 거야. 그게 분단의 아픔이야.']},
+ 10:{after:1,q:'{name}, 만약 한 사람이 법도 만들고, 나라 살림도 하고, 재판도 다 한다면?',o:['빠르고 편할 것 같아','마음대로 해도 막을 수 없어'],a:1,r:['빠를 순 있지만, 그 사람이 나쁜 마음을 먹으면 아무도 못 막아. 그래서 셋으로 나눈 거야.','정확해! 그래서 국회·정부·법원으로 나누고 서로 감시하게 했어. 이걸 삼권 분립이라고 해.']},
+ 11:{after:1,q:'겨울에 딸기가 비싼 이유, {name}은 뭐라고 생각해?',o:['겨울엔 딸기가 적게 나와서(공급 적음)','딸기 농부가 욕심내서'],a:0,r:['맞아! 공급이 적으면 가격이 오르지. 반대로 여름엔 많이 나와서 싸져.','그럴 수도 있지만 핵심은 겨울엔 딸기가 적게 나온다는 거야. 공급이 적으면 값이 올라.']},
+};
+const UNITS = [
+ {name:'5학년 2학기 4단원 · 유적과 유물로 살펴본 옛사람들의 생활',ch:[1,2,3]},
+ {name:'5학년 2학기 5단원 · 달라지는 시대, 변화하는 생활 모습',ch:[4,5]},
+ {name:'5학년 2학기 6단원 · 식민 통치와 저항, 전쟁이 바꾼 사회와 생활',ch:[6,7]},
+ {name:'6학년 1학기 7단원 · 민주화와 산업화',ch:[8]},
+];
+const CH = [
+ {id:1,title:'선사 시대와 고조선',std:'[6사04-01]',emoji:'🪨',
+  terms:[['뗀석기','돌을 깨서 만든 구석기 도구 (주먹도끼)'],['간석기','돌을 갈아 만든 신석기 도구'],['빗살무늬 토기','신석기 시대 곡식을 담던 그릇'],['고인돌','청동기 시대 지배자의 무덤'],['비파형 동검','고조선을 대표하는 청동 칼'],['8조법','고조선의 법 (사람을 죽이면 사형)']],
+  timeline:[['구석기','동굴 생활, 사냥·채집, 뗀석기'],['신석기','농사 시작, 움집, 토기'],['청동기','고인돌, 계급 발생, 벼농사'],['고조선','단군왕검이 건국 (기원전 2333년)']],
+  quiz:[
+   {q:'다음 중 신석기 시대의 생활 모습으로 알맞은 것은?',o:['동굴에서 살며 이동 생활을 했다.','움집을 짓고 농사를 지었다.','고인돌을 만들었다.','철로 무기를 만들었다.'],a:1,e:'신석기 시대에는 농사를 시작하면서 한곳에 정착해 움집을 짓고 살았어요.'},
+   {q:'고인돌을 통해 알 수 있는 사실은?',o:['사람들이 모두 평등했다.','힘센 지배자(계급)가 있었다.','농사를 짓지 않았다.','글자를 사용했다.'],a:1,e:'거대한 돌을 옮기려면 많은 사람을 부릴 수 있는 지배자가 있어야 했어요.'},
+   {q:'고조선을 세운 사람은 누구인가요?',o:['왕건','대조영','단군왕검','이성계'],a:2,e:'삼국유사에 따르면 단군왕검이 기원전 2333년 고조선을 세웠어요.'},
+   {q:'고조선의 8조법 내용으로 알 수 있는 것은?',o:['모든 사람이 노비였다.','개인의 재산과 생명을 중요하게 여겼다.','농사를 금지했다.','왕이 없었다.'],a:1,e:'남을 다치게 하면 곡식으로 갚게 한 것은 재산과 생명을 보호했다는 뜻이에요.'},
+   {q:'시대 순서가 맞는 것은?',o:['신석기 → 구석기 → 청동기','구석기 → 청동기 → 신석기','구석기 → 신석기 → 청동기','청동기 → 신석기 → 구석기'],a:2,e:'구석기(뗀석기) → 신석기(간석기·토기) → 청동기(고인돌·동검) 순서예요.'}]},
+ {id:2,title:'삼국과 통일신라·발해',std:'[6사04-02]',emoji:'⚔️',
+  terms:[['광개토대왕','고구려 영토를 크게 넓힌 왕, 광개토대왕릉비'],['금동대향로','백제의 화려한 향로'],['첨성대','신라 선덕여왕 때 만든 별 관측대'],['화랑','신라의 청소년 수련 단체'],['대조영','고구려 유민을 이끌고 발해 건국'],['불국사·석굴암','통일신라 불교 문화유산 (세계유산)']],
+  timeline:[['삼국 시대','고구려·백제·신라·가야'],['5세기','광개토대왕·장수왕, 고구려 전성기'],['668년','신라 삼국 통일'],['698년','대조영 발해 건국 → 남북국 시대']],
+  quiz:[
+   {q:'광개토대왕릉비를 통해 알 수 있는 것은?',o:['백제의 예술','고구려의 영토 확장','신라의 불교','발해의 건국'],a:1,e:'비석에는 광개토대왕이 정복한 땅과 업적이 새겨져 있어요.'},
+   {q:'다음 문화유산과 나라를 바르게 짝지은 것은?',o:['첨성대 – 백제','금동대향로 – 신라','금관 – 신라','다보탑 – 고구려'],a:2,e:'금관·첨성대는 신라, 금동대향로는 백제, 다보탑은 통일신라 불국사에 있어요.'},
+   {q:'발해를 세운 사람과 계승한 나라는?',o:['대조영 – 고구려','장보고 – 신라','왕건 – 백제','김유신 – 가야'],a:0,e:'대조영은 고구려 유민을 이끌고 발해를 세웠고, 발해는 스스로 고구려를 잇는다고 했어요.'},
+   {q:'통일신라와 발해가 함께 있던 시기를 무엇이라 하나요?',o:['삼국 시대','남북국 시대','고려 시대','후삼국 시대'],a:1,e:'남쪽 통일신라, 북쪽 발해가 있어 남북국 시대라고 불러요.'},
+   {q:'신라 무덤에서 금관이 나온 것으로 추론할 수 있는 것은?',o:['신라에는 왕이 없었다.','신라는 금 세공 기술이 뛰어났다.','신라는 농사를 짓지 않았다.','신라는 불교를 믿지 않았다.'],a:1,e:'유물을 보고 당시 기술과 생활을 추론하는 것이 교과서 핵심 활동이에요.'}]},
+ {id:3,title:'고려 시대',std:'[6사04-03]',emoji:'🏺',
+  terms:[['왕건','고려를 세우고 후삼국 통일 (태조)'],['고려청자','상감 기법의 비취색 자기'],['팔만대장경','몽골 침입 때 만든 불교 경판 (해인사)'],['직지심체요절','세계에서 가장 오래된 금속 활자본'],['벽란도','고려의 국제 무역항 (예성강)'],['삼별초','몽골에 끝까지 저항한 군대']],
+  timeline:[['918년','왕건 고려 건국'],['936년','후삼국 통일'],['993년','서희, 거란과 담판 (강동 6주)'],['1231년~','몽골 침입, 강화도 천도'],['1377년','직지 인쇄']],
+  quiz:[
+   {q:'고려라는 이름은 어느 나라를 잇는다는 뜻인가요?',o:['신라','백제','고구려','고조선'],a:2,e:'왕건은 고구려를 계승한다는 뜻으로 나라 이름을 고려라 했어요.'},
+   {q:'고려청자의 표면을 파내고 다른 흙을 채워 무늬를 내는 기법은?',o:['상감 기법','분청 기법','금속 활자','벽화'],a:0,e:'상감 기법은 고려만의 독창적인 기술이에요.'},
+   {q:'팔만대장경을 만든 까닭은?',o:['일본과 무역하려고','부처의 힘으로 몽골을 물리치려고','왕의 이름을 알리려고','농사법을 적으려고'],a:1,e:'몽골 침입 때 부처의 힘으로 나라를 지키고자 만들었어요.'},
+   {q:'직지심체요절이 중요한 이유는?',o:['가장 큰 책이라서','세계에서 가장 오래된 금속 활자 인쇄본이라서','한글로 쓰여서','왕이 직접 써서'],a:1,e:'직지는 1377년 금속 활자로 찍은 책으로 유네스코 세계기록유산이에요.'},
+   {q:'몽골이 쳐들어왔을 때 고려가 수도를 옮긴 곳은?',o:['제주도','강화도','거제도','울릉도'],a:1,e:'몽골군이 바다에 약한 점을 이용해 강화도로 수도를 옮겼어요.'}]},
+ {id:4,title:'조선의 건국과 유교 문화',std:'[6사05-01]',emoji:'📖',
+  terms:[['이성계','조선을 세운 태조 (1392)'],['유교(성리학)','조선의 나라 다스리는 기본 사상'],['훈민정음','세종이 만든 우리 글자 (1443)'],['경국대전','조선의 기본 법전'],['신분 제도','양반·중인·상민·천민'],['임진왜란','1592년 일본의 침입, 이순신 활약']],
+  timeline:[['1392년','이성계 조선 건국'],['1443년','세종, 훈민정음 창제 (1446 반포)'],['1592년','임진왜란 (한산도 대첩·행주 대첩)'],['1636년','병자호란 (남한산성)']],
+  quiz:[
+   {q:'조선이 나라를 다스리는 기본으로 삼은 사상은?',o:['불교','유교','도교','기독교'],a:1,e:'조선은 유교(성리학)를 바탕으로 효와 예절, 충성을 중요하게 여겼어요.'},
+   {q:'세종대왕이 훈민정음을 만든 까닭은?',o:['중국과 무역하려고','백성이 쉽게 글을 익혀 뜻을 펼 수 있게 하려고','양반만 쓰게 하려고','불경을 번역하려고'],a:1,e:'훈민정음 서문에 "어리석은 백성이 뜻을 펴지 못하는 것을 가엾게 여겨" 만들었다고 되어 있어요.'},
+   {q:'조선의 신분 중 관리가 되어 나라를 다스린 신분은?',o:['천민','상민','중인','양반'],a:3,e:'양반은 과거 시험을 보고 관리가 되었고, 상민은 주로 농사를 지었어요.'},
+   {q:'다음 중 세종 때 만든 것이 아닌 것은?',o:['측우기','앙부일구','거중기','자격루'],a:2,e:'거중기는 조선 후기 정조 때 정약용이 만들었어요.'},
+   {q:'임진왜란 때 이순신이 학익진으로 크게 이긴 전투는?',o:['행주 대첩','한산도 대첩','귀주 대첩','살수 대첩'],a:1,e:'한산도 대첩(1592)은 학이 날개를 펼친 모양의 학익진으로 승리했어요. 행주는 권율, 귀주는 강감찬.'}]},
+ {id:5,title:'조선 후기와 개항기',std:'[6사05-02]',emoji:'🚂',
+  terms:[['실학','백성의 실제 생활에 도움이 되는 학문'],['정약용','거중기 제작, 목민심서'],['정조','규장각·수원 화성, 탕평'],['서민 문화','판소리·탈춤·풍속화·한글 소설'],['강화도 조약','1876년 개항 (불평등 조약)'],['독립신문','최초의 민간 한글 신문 (1896)']],
+  timeline:[['영조·정조','탕평책, 실학 발달, 수원 화성'],['1863년~','흥선 대원군 (척화비)'],['1876년','강화도 조약, 개항'],['1894년','동학 농민 운동, 갑오개혁'],['1897년','대한제국 선포']],
+  quiz:[
+   {q:'실학자들이 주장한 내용으로 알맞은 것은?',o:['예절만 중요하다.','백성의 실제 생활에 도움이 되는 학문을 하자.','외국과 절대 교류하지 말자.','불교를 다시 믿자.'],a:1,e:'실학은 농업·상업·과학 등 실제 생활을 개선하려는 학문이었어요.'},
+   {q:'정약용이 수원 화성을 지을 때 만든 기계는?',o:['측우기','거중기','자격루','혼천의'],a:1,e:'거중기는 도르래를 이용해 무거운 돌을 쉽게 들어 올렸어요.'},
+   {q:'조선 후기 서민 문화가 아닌 것은?',o:['판소리','탈춤','풍속화','고려청자'],a:3,e:'고려청자는 고려 시대 귀족 문화예요.'},
+   {q:'1876년 조선이 일본과 맺은 조약으로 항구를 연 사건은?',o:['강화도 조약','을사늑약','갑신정변','임오군란'],a:0,e:'강화도 조약은 우리나라 최초의 근대 조약이자 불평등 조약이었어요.'},
+   {q:'개항 이후 들어온 근대 문물이 아닌 것은?',o:['전차','전등','기차','고인돌'],a:3,e:'고인돌은 청동기 시대 유적이에요. 전차·전등·기차·전화·서양식 학교가 들어왔어요.'}]},
+ {id:6,title:'일제 강점기와 독립운동',std:'[6사06-01]',emoji:'🕊️',
+  terms:[['국권 피탈','1910년 일제에 나라를 빼앗김'],['3·1 운동','1919년 전국적 만세 운동'],['대한민국 임시정부','1919년 상하이 수립, 김구'],['봉오동·청산리','1920년 독립군의 승리 (홍범도·김좌진)'],['창씨개명','이름을 일본식으로 바꾸게 한 정책'],['조선어 학회','우리말 사전을 만들어 한글을 지킴']],
+  timeline:[['1910년','국권 피탈, 헌병 경찰 통치'],['1919년','3·1 운동, 임시정부 수립'],['1920년','봉오동 전투, 청산리 대첩'],['1932년','윤봉길 의거'],['1940년','한국광복군 창설']],
+  quiz:[
+   {q:'일제가 우리 국권을 빼앗은 해는?',o:['1876년','1910년','1919년','1945년'],a:1,e:'1910년 국권 피탈 이후 1945년 광복까지 35년간 일제 강점기였어요.'},
+   {q:'3·1 운동에 대한 설명으로 알맞은 것은?',o:['일부 지역에서만 일어났다.','학생·농민 등 온 국민이 참여한 평화적 만세 운동이었다.','무기를 들고 싸운 전투였다.','일본에서만 일어났다.'],a:1,e:'3·1 운동은 전국과 해외로 퍼진 비폭력 만세 운동이었고, 임시정부 수립의 계기가 되었어요.'},
+   {q:'대한민국 임시정부가 세워진 곳은?',o:['서울','평양','상하이','도쿄'],a:2,e:'1919년 중국 상하이에 세워져 독립운동을 이끌었어요.'},
+   {q:'일제의 민족 말살 정책이 아닌 것은?',o:['창씨개명','우리말 사용 금지','신사 참배 강요','한글 사전 편찬'],a:3,e:'한글 사전 편찬은 조선어 학회가 우리말을 지키려고 한 저항이에요.'},
+   {q:'청산리 대첩을 이끈 독립군 지도자는?',o:['김좌진','안중근','유관순','김구'],a:0,e:'김좌진의 독립군이 청산리에서 일본군을 크게 물리쳤어요. 봉오동은 홍범도.'}]},
+ {id:7,title:'광복과 6·25 전쟁',std:'[6사06-02]',emoji:'🇰🇷',
+  terms:[['8·15 광복','1945년 일본 항복, 나라를 되찾음'],['38도선','미군·소련군이 나눈 경계선'],['5·10 총선거','1948년 우리나라 첫 국회의원 선거'],['대한민국 정부 수립','1948년 8월 15일'],['인천 상륙 작전','1950년 9월, 유엔군의 반격'],['정전 협정','1953년 7월 27일, 휴전선']],
+  timeline:[['1945.8.15','광복'],['1948.8.15','대한민국 정부 수립'],['1950.6.25','북한군 남침, 전쟁 시작'],['1950.9','인천 상륙 작전, 서울 수복'],['1953.7.27','정전 협정 (휴전)']],
+  quiz:[
+   {q:'광복 이후 38도선을 기준으로 북쪽에 들어온 군대는?',o:['미군','소련군','중국군','영국군'],a:1,e:'남쪽에는 미군, 북쪽에는 소련군이 들어오면서 분단이 시작됐어요.'},
+   {q:'대한민국 정부가 세워진 날은?',o:['1945년 8월 15일','1948년 8월 15일','1950년 6월 25일','1953년 7월 27일'],a:1,e:'광복(1945)과 정부 수립(1948)은 날짜가 같아 헷갈리기 쉬워요. 3년 뒤!'},
+   {q:'6·25 전쟁에서 국군과 유엔군이 전세를 뒤집은 작전은?',o:['인천 상륙 작전','한산도 대첩','청산리 대첩','1·4 후퇴'],a:0,e:'맥아더가 이끈 유엔군이 인천에 상륙해 서울을 되찾았어요.'},
+   {q:'6·25 전쟁이 우리 생활에 남긴 영향이 아닌 것은?',o:['이산가족이 생겼다.','수많은 건물과 공장이 파괴되었다.','휴전선으로 남북이 나뉘었다.','일본이 우리나라를 다스리게 되었다.'],a:3,e:'일본 통치는 일제 강점기(1910~1945)의 일이에요.'},
+   {q:'1953년 정전 협정으로 생긴 남북의 경계선은?',o:['38도선','휴전선','국경선','해안선'],a:1,e:'전쟁 전에는 38도선, 정전 협정 후에는 휴전선(군사 분계선)이에요.'}]},
+ {id:8,title:'민주화와 산업화',std:'[6사07-01·02]',emoji:'🏙️',
+  terms:[['산업화','농업 중심에서 공업 중심 사회로 변화'],['새마을 운동','1970년대 농촌 잘살기 운동'],['4·19 혁명','1960년 부정 선거에 맞선 시민 운동'],['5·18 민주화 운동','1980년 광주 시민의 민주화 운동'],['6월 민주 항쟁','1987년, 대통령 직선제 쟁취'],['남북 정상 회담','2000년 첫 회담, 평화 통일 노력']],
+  timeline:[['1960년','4·19 혁명'],['1970년','경부고속도로 개통'],['1980년','5·18 민주화 운동'],['1987년','6월 민주 항쟁'],['1988년','서울 올림픽'],['2000년','첫 남북 정상 회담']],
+  quiz:[
+   {q:'산업화로 인한 생활 변화로 알맞은 것은?',o:['농촌 인구가 늘었다.','도시로 사람이 몰리고 아파트가 늘었다.','공장이 사라졌다.','수출이 줄었다.'],a:1,e:'공장이 있는 도시로 사람들이 이동해 도시가 커지고 아파트가 늘었어요.'},
+   {q:'1987년 6월 민주 항쟁의 결과는?',o:['대통령 직선제 개헌','조선 건국','광복','휴전'],a:0,e:'국민이 대통령을 직접 뽑는 직선제를 이끌어냈어요.'},
+   {q:'민주화 운동을 시간 순서대로 바르게 나열한 것은?',o:['5·18 → 4·19 → 6월 항쟁','4·19 → 5·18 → 6월 항쟁','6월 항쟁 → 4·19 → 5·18','4·19 → 6월 항쟁 → 5·18'],a:1,e:'4·19(1960) → 5·18(1980) → 6월 항쟁(1987) 순서예요.'},
+   {q:'평화 통일을 위한 노력으로 알맞지 않은 것은?',o:['이산가족 상봉','남북 정상 회담','비무장지대 평화 공원','전쟁 준비'],a:3,e:'교과서는 대화와 교류로 평화 통일을 준비하는 노력을 배워요.'},
+   {q:'1988년 우리나라에서 열린 국제 행사는?',o:['월드컵','서울 올림픽','만국 박람회','아시안 게임'],a:1,e:'88 서울 올림픽은 산업화로 성장한 우리나라를 세계에 알린 행사예요. 월드컵은 2002년.'}]}
+];
+UNITS.length=0;
+UNITS.push(
+ {name:'5학년 2학기 4단원 · 유적과 유물로 살펴본 옛사람들의 생활',ch:[1,2,3]},
+ {name:'5학년 2학기 5단원 · 달라지는 시대, 변화하는 생활 모습',ch:[4,5]},
+ {name:'5학년 2학기 6단원 · 식민 통치와 저항, 전쟁이 바꾼 사회와 생활',ch:[6,7]},
+ {name:'6학년 1학기 7단원 · 평화 통일을 위한 노력, 민주화와 산업화',ch:[8,9]},
+ {name:'6학년 1학기 8단원 · 민주주의와 시민 참여',ch:[10]},
+ {name:'6학년 2학기 11단원 · 시장 경제와 국가 간 거래',ch:[11]});
+CH.push(
+ {id:9,title:'분단과 평화 통일',std:'[6사07-01]',emoji:'🕊️',
+  terms:[['휴전선','1953년 정전 협정으로 생긴 남북 경계'],['비무장지대(DMZ)','휴전선 양쪽 2km, 군대가 없는 지역'],['이산가족','분단·전쟁으로 헤어진 가족'],['남북 정상 회담','2000년 첫 회담(6·15 공동 선언)'],['개성 공단','남북이 함께 운영한 공업 단지'],['평화 통일','대화와 교류로 이루는 통일']],
+  timeline:[['1953년','정전 협정, 분단 고착'],['1985년','첫 이산가족 상봉'],['2000년','첫 남북 정상 회담'],['2018년','판문점 남북 정상 회담']],
+  quiz:[
+   {q:'분단으로 생긴 문제가 아닌 것은?',o:['이산가족의 아픔','국방비 부담','남북 왕래 어려움','한글 창제'],a:3,e:'한글 창제는 조선 세종 때 일이에요.'},
+   {q:'평화 통일을 위한 노력으로 알맞은 것은?',o:['남북 정상 회담','전쟁 준비','국경 봉쇄','외국인 추방'],a:0,e:'대화·교류(정상 회담, 개성 공단, 이산가족 상봉)가 평화 통일 노력이에요.'},
+   {q:'휴전선 근처 군대가 없는 지역을 무엇이라 하나요?',o:['38도선','비무장지대','국경선','해안선'],a:1,e:'비무장지대(DMZ)는 사람 출입이 제한돼 생태계가 보존되었어요.'},
+   {t:'short',q:'2000년 처음 열린, 남과 북의 최고 지도자가 만난 회담을 무엇이라 하나요? (○○ ○○ 회담)',ans:['남북정상회담','남북 정상 회담'],e:'남북 정상 회담이에요. 2000·2007·2018년에 열렸어요.'},
+   {t:'short',q:'분단이나 전쟁으로 헤어져 서로 만나지 못하는 가족을 네 글자로 무엇이라 하나요?',ans:['이산가족'],e:'이산가족. 1985년 처음 상봉 행사가 열렸어요.'}]},
+ {id:10,title:'민주주의와 시민 참여',std:'[6사08-01·02·03]',emoji:'🗳️',
+  terms:[['선거 4원칙','보통·평등·직접·비밀 선거'],['국회','법을 만들고 예산을 심의 (입법)'],['정부(행정부)','대통령을 중심으로 나라 살림 (행정)'],['법원','법에 따라 재판 (사법)'],['삼권 분립','권력을 셋으로 나눠 서로 견제'],['미디어','정보 전달·여론 형성, 비판적으로 이용']],
+  timeline:[['만 18세','선거권'],['5년','대통령 임기 (단임)'],['4년','국회의원 임기'],['3심 제도','재판을 세 번까지 받을 수 있음']],
+  quiz:[
+   {q:'선거의 4원칙이 아닌 것은?',o:['보통 선거','평등 선거','직접 선거','공개 선거'],a:3,e:'비밀 선거가 맞아요. 누구를 뽑았는지 남이 알 수 없어야 해요.'},
+   {q:'법을 만드는 국가 기관은?',o:['국회','정부','법원','헌법재판소'],a:0,e:'국회는 입법 기관으로 법률을 만들고 예산을 심의해요.'},
+   {q:'국가 권력을 세 기관으로 나눈 까닭은?',o:['일을 빨리 하려고','한 기관이 권력을 마음대로 쓰지 못하게 하려고','세금을 더 걷으려고','외국과 경쟁하려고'],a:1,e:'삼권 분립은 권력 남용을 막고 국민의 자유를 지키기 위한 거예요.'},
+   {t:'short',q:'대통령을 중심으로 법에 따라 나라 살림을 하는 국가 기관을 무엇이라 하나요? (○○부)',ans:['행정부','정부'],e:'행정부(정부)예요. 국회는 입법부, 법원은 사법부.'},
+   {t:'short',q:'국가 권력을 국회·정부·법원으로 나누는 원리를 네 글자로 쓰세요.',ans:['삼권분립','삼권 분립'],e:'삼권 분립이에요.'}]},
+ {id:11,title:'시장 경제와 경제 성장',std:'[6사11-01·02·03]',emoji:'💰',
+  terms:[['가계','소비 활동의 주체, 노동을 제공'],['기업','생산 활동의 주체, 일자리 제공'],['수요와 공급','사려는 양과 팔려는 양 → 가격 결정'],['경제 성장','경공업 → 중화학 공업 → 첨단 산업'],['무역','나라 간 물건·서비스 거래 (수출·수입)'],['경제 성장의 문제','빈부 격차·환경 오염·노동 문제']],
+  timeline:[['1960년대','경공업(옷·신발) 수출'],['1970년대','중화학 공업(철강·조선·자동차)'],['1990년대~','반도체·IT 첨단 산업'],['현재','세계 10위권 무역 국가']],
+  quiz:[
+   {q:'가계와 기업의 역할을 바르게 짝지은 것은?',o:['가계 – 생산, 기업 – 소비','가계 – 소비, 기업 – 생산','둘 다 생산만','둘 다 소비만'],a:1,e:'가계는 소비하고 노동을 제공, 기업은 생산하고 일자리를 제공해요.'},
+   {q:'사려는 사람은 많은데 물건이 적으면 가격은?',o:['오른다','내린다','변하지 않는다','0이 된다'],a:0,e:'수요가 공급보다 많으면 가격이 올라요.'},
+   {q:'우리나라가 무역을 하는 까닭으로 알맞은 것은?',o:['자원과 기술이 나라마다 다르기 때문','물건이 남아서','법으로 정해서','전쟁을 막으려고'],a:0,e:'각 나라가 잘 만드는 것을 교환하면 서로 이익이에요.'},
+   {t:'short',q:'다른 나라에 물건을 파는 것을 두 글자로 무엇이라 하나요?',ans:['수출'],e:'수출. 사 오는 것은 수입이에요.'},
+   {t:'short',q:'빠른 경제 성장으로 생긴 문제를 한 가지 쓰세요.',ans:['빈부격차','빈부 격차','환경오염','환경 오염','노동문제','노동 문제','양극화','공해'],e:'빈부 격차, 환경 오염, 노동 문제 등이 정답이에요.'}]});
+// 기존 챕터에 주관식 2문제씩 추가
+const SHORT={
+ 1:[{q:'청동기 시대 지배자의 무덤으로, 커다란 돌을 올려 만든 것은?',ans:['고인돌'],e:'고인돌이에요.'},{q:'고조선을 세운 사람의 이름을 쓰세요.',ans:['단군왕검','단군'],e:'단군왕검이에요.'}],
+ 2:[{q:'고구려 유민을 이끌고 발해를 세운 사람은?',ans:['대조영'],e:'대조영이에요.'},{q:'신라 선덕여왕 때 만든, 별을 관측하던 건축물은?',ans:['첨성대'],e:'첨성대예요.'}],
+ 3:[{q:'고려청자에 무늬를 새기는 독창적 기법을 무엇이라 하나요? (○○ 기법)',ans:['상감','상감기법','상감 기법'],e:'상감 기법이에요.'},{q:'세계에서 가장 오래된 금속 활자 인쇄본의 이름은?',ans:['직지','직지심체요절'],e:'직지심체요절(직지)이에요.'}],
+ 4:[{q:'세종대왕이 만든 우리 글자의 처음 이름을 쓰세요.',ans:['훈민정음'],e:'훈민정음이에요.'},{q:'임진왜란 때 이순신이 만든, 등에 뚜껑과 송곳이 있는 배는?',ans:['거북선'],e:'거북선이에요.'}],
+ 5:[{q:'백성의 실제 생활에 도움이 되는 학문을 두 글자로 무엇이라 하나요?',ans:['실학'],e:'실학이에요.'},{q:'1876년 일본과 맺은, 조선이 항구를 연 조약의 이름은?',ans:['강화도조약','강화도 조약'],e:'강화도 조약이에요.'}],
+ 6:[{q:'1919년 3월 1일 온 나라에서 일어난 만세 운동의 이름은?',ans:['3.1운동','3·1운동','3·1 운동','삼일운동','31운동','3.1 운동'],e:'3·1 운동이에요.'},{q:'1919년 상하이에 세워진 우리나라 정부의 이름을 쓰세요.',ans:['대한민국임시정부','대한민국 임시정부','임시정부'],e:'대한민국 임시정부예요.'}],
+ 7:[{q:'1950년 9월 유엔군이 전세를 뒤집은 작전의 이름은? (○○ 상륙 작전)',ans:['인천상륙작전','인천 상륙 작전','인천'],e:'인천 상륙 작전이에요.'},{q:'대한민국 정부가 수립된 연도를 숫자로 쓰세요.',ans:['1948','1948년'],e:'1948년 8월 15일이에요.'}],
+ 8:[{q:'1987년 대통령 직선제를 이끌어 낸 민주화 운동의 이름은? (○월 ○○ ○○)',ans:['6월민주항쟁','6월 민주 항쟁','6월항쟁','6월 항쟁','유월민주항쟁'],e:'6월 민주 항쟁이에요.'},{q:'1970년대 농촌 잘살기 운동의 이름을 쓰세요.',ans:['새마을운동','새마을 운동'],e:'새마을 운동이에요.'}],
+};
+for(const id in SHORT) CH.find(c=>c.id==id).quiz.push(...SHORT[id].map(q=>({t:'short',...q})));
+// ===== 안내자(호야 선생님) 얼굴 =====
+const GUIDE=`<svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="23" fill="#E0A526"/><path d="M8 14 l6 -8 l5 7z M38 14 l-6 -8 l-5 7z" fill="#E0A526"/><g stroke="#22303F" stroke-width="2"><path d="M14 10 v8 M23 8 v6 M32 10 v8"/></g><circle cx="16" cy="22" r="3" fill="#22303F"/><circle cx="30" cy="22" r="3" fill="#22303F"/><ellipse cx="23" cy="30" rx="6" ry="4" fill="#fff"/><path d="M20 31 q3 3 6 0" stroke="#22303F" stroke-width="2" fill="none"/></svg>`;
+const KEY='hanguksa_v2';
+let S={seen:{},res:{},cur:null,name:'',cash:null};
+const defCash=()=>({balance:0,log:[],pending:null,pin:'',reward:500,lastEarn:''});
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&typeof x==='object'){S.seen=x.seen||{};S.res=x.res||{};S.name=x.name||'';S.cash=Object.assign(defCash(),x.cash||{});}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({seen:S.seen,res:S.res,name:S.name,cash:S.cash}));}catch(e){}}
+function resetAll(){if(confirm('학습 기록을 모두 지울까요?')){S={seen:{},res:{},cur:null,name:'',cash:defCash()};try{localStorage.removeItem(KEY)}catch(e){};go('home');askName();}}
+load(); if(!S.cash) S.cash=defCash();
+const fill=t=>t.replace(/\{name\}/g,S.name||'친구');
+const chById=id=>CH.find(c=>c.id===id);
+
+function go(t,ch){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  if(ch) S.cur=ch;
+  ({home:renderHome,scene:()=>startScenes(ch),summary:renderSummary,quiz:startQuiz,exam:renderExam,wallet:renderWallet,report:renderReport})[t]();
+  document.getElementById('s-'+t).classList.add('on'); window.scrollTo(0,0);
+}
+function askName(){
+  const m=document.createElement('div'); m.className='modal';
+  m.innerHTML=`<div class="box"><div class="talk" style="padding:0 0 8px"><div class="av">${GUIDE}</div><div class="bub"><div class="who">호야 선생님</div>안녕! 나는 한국사 안내자 호야야. 너를 뭐라고 부르면 좋을까?</div></div><input id="nm" placeholder="이름 또는 별명" maxlength="8"><button class="cta" onclick="setName()">시작하기</button></div>`;
+  document.body.appendChild(m); setTimeout(()=>document.getElementById('nm').focus(),50);
+  window.setName=()=>{S.name=document.getElementById('nm').value.trim()||'친구'; save(); m.remove(); renderHome();};
+}
+function renderHome(){
+  const h=document.getElementById('home');
+  const n=Object.keys(S.res).filter(k=>k!=='exam').length;
+  h.innerHTML=`<div class="talk" style="padding:14px 0 6px"><div class="av">${GUIDE}</div><div class="bub"><div class="who">호야 선생님</div>${n?fill(`{name}, 벌써 ${n}개 챕터를 끝냈네! 오늘은 어디로 가볼까?`):fill('{name}, 교과서 순서대로 가볼까? 궁금한 챕터부터 골라도 좋아.')}</div></div>`+
+  UNITS.map(u=>`<div class="unit">${u.name}</div>`+u.ch.map(id=>{const c=chById(id),r=S.res[id];
+    return `<button class="chap ${r&&r.score>=r.total*0.7?'done':''}" onclick="go('scene',chById(${id}))"><div class="em">${c.emoji}</div><div><div class="nm">${id}. ${c.title}</div><div class="st">${c.std} · 장면 ${SCENES[id].length}개 · 문제 ${c.quiz.length}개</div></div>${r?`<div class="sc">${r.score}/${r.total}</div>`:''}</button>`}).join('')).join('');
+}
+
+// ----- 장면 흐름 (장면 + 대화 질문) -----
+let flow=[],fi=0;
+function startScenes(ch){
+  S.cur=ch; fi=0; flow=[];
+  const ask=ASKS[ch.id];
+  SCENES[ch.id].forEach((s,i)=>{flow.push({type:'scene',s}); if(ask&&ask.after===i) flow.push({type:'ask',a:ask});});
+  document.getElementById('sc-title').textContent=`${ch.emoji} ${ch.title}`; drawStep();
+}
+function drawStep(){
+  const st=flow[fi], stage=document.getElementById('stage');
+  if(st.type==='scene'){
+    stage.className='stage';
+    stage.innerHTML=`<svg class="scene" viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg">${DEFS}${st.s.svg}<rect width="340" height="200" fill="none" filter="url(#paper)" style="mix-blend-mode:multiply" pointer-events="none"/></svg><div class="talk"><div class="av">${GUIDE}</div><div class="bub"><div class="who">호야 선생님</div>${fill(st.s.cap)}</div></div><div class="keypt">📌 ${st.s.key}</div>`;
+    document.getElementById('sc-next').disabled=false;
+  } else {
+    stage.className='';
+    stage.innerHTML=`<div class="ask"><div class="talk" style="padding:0 0 10px"><div class="av">${GUIDE}</div><div class="bub" style="background:#fff;color:var(--meok)"><div class="who">호야 선생님</div>${fill(st.a.q)}</div></div>${st.a.o.map((o,i)=>`<button class="opt" onclick="askPick(${i})"><span class="n">${i+1}</span><span>${o}</span></button>`).join('')}<div id="askreply"></div></div>`;
+    document.getElementById('sc-next').disabled=true;
+  }
+  const scenes=flow.filter(f=>f.type==='scene'); const sIdx=flow.slice(0,fi+1).filter(f=>f.type==='scene').length-1;
+  document.getElementById('sc-dots').innerHTML=scenes.map((_,i)=>`<i class="${i===sIdx?'on':''}"></i>`).join('');
+  document.getElementById('sc-prev').disabled=fi===0;
+  const last=fi===flow.length-1, nb=document.getElementById('sc-next');
+  nb.textContent=last?'핵심 정리 보기 ✨':'다음 ▶'; nb.onclick=last?()=>{S.seen[S.cur.id]=true;save();go('summary')}:()=>scene(1);
+}
+function askPick(i){
+  const a=flow[fi].a; document.querySelectorAll('.ask .opt').forEach((b,k)=>{b.disabled=true; if(k===i) b.classList.add(a.a<0||a.a===i?'ok':'no'); if(a.a>=0&&k===a.a) b.classList.add('ok');});
+  document.getElementById('askreply').innerHTML=`<div class="reply">${fill(a.r[i])}</div>`;
+  document.getElementById('sc-next').disabled=false;
+}
+function scene(d){ fi=Math.max(0,Math.min(flow.length-1,fi+d)); drawStep(); window.scrollTo(0,0); }
+
+// ----- 정리 -----
+function renderSummary(){
+  const c=S.cur; document.getElementById('sm-title').textContent=`${c.emoji} 핵심 정리`;
+  document.getElementById('summary').innerHTML=`<div class="talk" style="padding:0 0 10px"><div class="av">${GUIDE}</div><div class="bub"><div class="who">호야 선생님</div>${fill('{name}, 여기 나온 용어와 연표는 시험에 꼭 나와. 한 번 읽고 문제로 확인해 보자!')}</div></div><h2>${c.title}</h2><p class="sub">${c.std} 성취 기준에 맞춘 시험 포인트</p>
+   <h3>꼭 알아야 할 용어</h3>${c.terms.map(t=>`<div class="term"><b>${t[0]}</b><span>${t[1]}</span></div>`).join('')}
+   <h3>연표</h3><div class="tl">${c.timeline.map(t=>`<div><b>${t[0]}</b>${t[1]}</div>`).join('')}</div>
+   <button class="cta" onclick="go('quiz')">확인 문제 풀기 (객관식 ${c.quiz.filter(q=>!q.t).length} + 주관식 ${c.quiz.filter(q=>q.t).length})</button>
+   <button class="cta ghost" onclick="go('scene',S.cur)">장면 다시 보기</button>`;
+}
+
+// ----- 퀴즈 -----
+let Q=[],qi=0,qr=[],qmode='chapter';
+const norm=s=>(s||'').toString().toLowerCase().replace(/[\s·.\-]/g,'');
+function startQuiz(){ qmode='chapter'; Q=S.cur.quiz.map(q=>({...q,ch:S.cur.id})); qi=0; qr=[]; document.getElementById('qz-title').textContent=`✏️ ${S.cur.title} 확인 문제`; renderQ('quiz'); }
+function renderQ(target){
+  if(qi>=Q.length) return finishQuiz(target);
+  const q=Q[qi];
+  const body=q.t==='short'
+    ?`<div class="short"><input id="sa" placeholder="답을 써 보세요" autocomplete="off" onkeydown="if(event.key==='Enter')answerShort('${target}')"><button class="cta blue" onclick="answerShort('${target}')">제출</button></div>`
+    :q.o.map((o,i)=>`<button class="opt" onclick="answer(${i},'${target}')"><span class="n">${i+1}</span><span>${o}</span></button>`).join('');
+  document.getElementById(target).innerHTML=`<div class="qhead"><span class="pill">${qi+1} / ${Q.length} ${q.t==='short'?'· 주관식':''}</span><div class="qdots">${Q.map((_,i)=>`<i class="${qr[i]===true?'ok':qr[i]===false?'no':''}"></i>`).join('')}</div></div>
+   <div class="qbox"><div class="q">${q.q}</div>${body}<div id="qreply"></div></div>`;
+  if(q.t==='short') setTimeout(()=>document.getElementById('sa').focus(),50);
+}
+function showReply(ok,target,q,extra=''){
+  qr[qi]=ok;
+  document.getElementById('qreply').innerHTML=`<div class="reply"><b>${ok?'정답! ':'아쉬워요. '}</b>${extra}${q.e}</div><button class="cta blue" onclick="qi++;renderQ('${target}')">${qi+1<Q.length?'다음 문제':'결과 보기'}</button>`;
+}
+function answer(i,target){
+  const q=Q[qi], ok=i===q.a;
+  document.querySelectorAll('#'+target+' .opt').forEach((b,k)=>{b.disabled=true;if(k===q.a)b.classList.add('ok');if(k===i&&!ok)b.classList.add('no');});
+  showReply(ok,target,q);
+}
+function answerShort(target){
+  const q=Q[qi], inp=document.getElementById('sa'), v=inp.value; if(!v.trim()) return;
+  const ok=q.ans.some(a=>norm(a)===norm(v)); inp.disabled=true; inp.style.borderColor=ok?'var(--nok)':'var(--jusa)';
+  document.querySelector('#'+target+' .short .cta').disabled=true;
+  showReply(ok,target,q,ok?'':`정답은 <b>${q.ans[0]}</b>. `);
+}
+function finishQuiz(target){
+  const score=qr.filter(Boolean).length,total=Q.length;
+  const wrong=Q.filter((_,i)=>!qr[i]).map(q=>({ch:q.ch,q:q.q}));
+  if(qmode==='chapter') S.res[S.cur.id]={score,total,wrong}; else S.res.exam={score,total,wrong,at:new Date().toLocaleDateString('ko-KR')};
+  save();
+  const msg=score===total?'완벽해! 시험 준비 끝.':score>=total*0.7?'잘했어. 틀린 것만 다시 보면 돼.':'장면을 다시 보고 한 번 더 풀어보자.';
+  document.getElementById(target).innerHTML=`<div class="score"><div class="big">${score} / ${total}</div><div>${fill('{name}, ')+msg}</div></div>${bonus}
+   ${wrong.length?`<h3>다시 볼 내용</h3>${wrong.map(w=>`<div class="term"><b>${chById(w.ch).title}</b><span>${w.q}</span></div>`).join('')}`:''}
+   <button class="cta" onclick="go('home')">챕터 목록으로</button>
+   ${qmode==='chapter'?`<button class="cta ghost" onclick="go('scene',S.cur)">장면 다시 보기</button>`:`<button class="cta ghost" onclick="renderExam()">다시 풀기</button>`}`;
+}
+
+// ----- 모의고사 -----
+function renderExam(){
+  const ex=document.getElementById('exam');
+  ex.innerHTML=`<div class="talk" style="padding:0 0 12px"><div class="av">${GUIDE}</div><div class="bub"><div class="who">호야 선생님</div>${fill('{name}, 시험 전 실전 연습! 범위를 고르면 객관식 8 + 주관식 4, 총 12문제를 섞어 낼게.')}</div></div>
+   <div class="row"><button class="cta blue" onclick="startExam('5')">5학년 2학기</button><button class="cta blue" onclick="startExam('6')">6학년</button></div><button class="cta" onclick="startExam('all')">전체 범위</button>`;
+}
+function startExam(range){
+  const ids=range==='5'?[1,2,3,4,5,6,7]:range==='6'?[8,9,10,11]:CH.map(c=>c.id);
+  const pool=CH.filter(c=>ids.includes(c.id)).flatMap(c=>c.quiz.map(q=>({...q,ch:c.id})));
+  const sh=a=>a.sort(()=>Math.random()-.5);
+  qmode='exam'; Q=[...sh(pool.filter(q=>!q.t)).slice(0,8),...sh(pool.filter(q=>q.t)).slice(0,4)]; qi=0; qr=[]; renderQ('exam');
+}
+
+// ----- 지갑 -----
+const won=n=>n.toLocaleString('ko-KR')+'원';
+function renderWallet(){
+  const c=S.cash, w=document.getElementById('wallet');
+  const tip={earn:['plus','+'],req:['wait','요청 중 '],paid:['minus','-'],reject:['minus','취소 ']};
+  w.innerHTML=`<div class="wallet"><div class="lbl">${S.name||'내'} 가상 캐시</div><div class="amt">${won(c.balance)}</div><div class="lbl">모의고사 100점 = ${won(c.reward)} (하루 1회)</div></div>
+   ${c.pending?`<div class="pend">📨 부모님께 <b>${won(c.pending.amt)}</b> 용돈 요청을 보냈어요. 부모님 탭에서 확인해 주시면 지급돼요.</div>`
+   :`<button class="cta" ${c.balance<=0?'disabled':''} onclick="requestCash()">부모님께 용돈으로 요청하기</button>`}
+   <h3>기록</h3>${c.log.length?c.log.slice(0,30).map(l=>`<div class="log"><div>${l.note}<div class="d">${l.at}</div></div><b class="${tip[l.t][0]}">${tip[l.t][1]}${l.t==='reject'?'':won(l.amt)}</b></div>`).join(''):'<p class="sub">아직 기록이 없어요. 모의고사 100점에 도전해 봐요!</p>'}`;
+}
+function requestCash(){
+  const c=S.cash; let v=prompt(`얼마를 요청할까요? (최대 ${won(c.balance)})`, c.balance); if(v===null) return;
+  v=parseInt(String(v).replace(/[^0-9]/g,''),10); if(!v||v<=0||v>c.balance) return alert('금액을 다시 확인해 주세요.');
+  c.pending={amt:v,at:new Date().toLocaleDateString('ko-KR')}; c.log.unshift({t:'req',amt:v,at:c.pending.at,note:'용돈 요청'}); save(); renderWallet();
+}
+let parentOK=false;
+function parentGate(){
+  const c=S.cash;
+  if(parentOK) return true;
+  if(!c.pin){ const p=prompt('부모님 비밀번호(숫자 4자리)를 처음 설정합니다.'); if(!p||!/^\d{4}$/.test(p)) return false; c.pin=p; save(); parentOK=true; return true; }
+  const p=prompt('부모님 비밀번호 4자리'); if(p===c.pin){parentOK=true;return true;} alert('비밀번호가 달라요.'); return false;
+}
+function parentAction(kind){
+  if(!parentGate()) return; const c=S.cash, p=c.pending; if(!p) return;
+  const at=new Date().toLocaleDateString('ko-KR');
+  if(kind==='pay'){ c.balance-=p.amt; c.log.unshift({t:'paid',amt:p.amt,at,note:'용돈 지급 완료 ✓'}); }
+  else c.log.unshift({t:'reject',amt:p.amt,at,note:'요청 보류 (캐시는 그대로)'});
+  c.pending=null; save(); renderReport();
+}
+function parentSettings(){
+  if(!parentGate()) return; const c=S.cash;
+  const r=prompt('모의고사 100점 보상 금액(원)',c.reward); if(r!==null&&parseInt(r)>=0){c.reward=parseInt(r)||0;}
+  const p=prompt('비밀번호 변경 (그대로 두려면 취소)'); if(p&&/^\d{4}$/.test(p)) c.pin=p;
+  save(); renderReport();
+}
+// ----- 리포트 -----
+function renderReport(){
+  const done=CH.filter(c=>S.res[c.id]); const weak=done.filter(c=>S.res[c.id].score<S.res[c.id].total*0.7);
+  let html=`<div class="rep" style="background:var(--meok);color:var(--hanji);border-color:var(--meok)"><div class="r1"><span>${S.name||'학생'} 학습 진도</span><span>${done.length} / ${CH.length} 챕터</span></div><div class="r2" style="color:#BFC7D3">${weak.length?'복습 추천: '+weak.map(c=>c.title).join(', '):done.length?'모든 챕터 70% 이상 정답.':'아직 시작 전이에요.'}</div>${S.res.exam?`<div class="r2" style="color:#F6D77A">최근 모의고사 ${S.res.exam.score}/${S.res.exam.total} (${S.res.exam.at})</div>`:''}</div>`;
+  html+=UNITS.map(u=>`<div class="unit">${u.name}</div>`+u.ch.map(id=>{const c=chById(id),x=S.res[id];
+    if(!x) return `<div class="rep"><div class="r1"><span>${c.emoji} ${c.title}</span><span style="color:#8A93A0">${S.seen[id]?'장면만 봄':'미학습'}</span></div></div>`;
+    return `<div class="rep"><div class="r1"><span>${c.emoji} ${c.title}</span><span>${x.score}/${x.total}</span></div><div class="bar"><i style="width:${x.score/x.total*100}%"></i></div>${x.wrong.length?`<div class="r2">틀린 문제: ${x.wrong.map(w=>w.q).join(' / ')}</div>`:''}</div>`}).join('')).join('');
+  const c=S.cash;
+  html=`<div class="unit">용돈 보상</div>${c.pending?`<div class="pend">📨 ${S.name||'아이'}가 <b>${won(c.pending.amt)}</b> 용돈을 요청했어요 (${c.pending.at})<div class="row"><button class="cta blue" onclick="parentAction('pay')">지급 완료</button><button class="cta ghost" onclick="parentAction('hold')">보류</button></div></div>`:`<div class="rep"><div class="r1"><span>가상 캐시 잔액</span><span>${won(c.balance)}</span></div><div class="r2">대기 중인 요청 없음 · 보상 ${won(c.reward)}/100점, 하루 1회</div></div>`}<button class="cta ghost" onclick="parentSettings()">보상 금액 · 비밀번호 설정</button>`+html;
+  html+=`<button class="cta ghost" onclick="resetAll()">기록 초기화 / 이름 바꾸기</button>`;
+  document.getElementById('report').innerHTML=html;
+}
+// PWA (아이폰: Safari 공유 → 홈 화면에 추가)
+try{ if('serviceWorker' in navigator && location.protocol==='https:' && !location.host.includes('androidplatform')) navigator.serviceWorker.register('sw.js'); }catch(e){}
+(function(){
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent), standalone=window.navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+  let hidden=false; try{hidden=localStorage.getItem('ios_tip')==='1'}catch(e){}
+  if(ios&&!standalone&&!hidden){ const d=document.createElement('div'); d.className='ios'; d.innerHTML=`📲 <span>아이폰은 <b>공유 버튼 <svg width="12" height="14" viewBox="0 0 12 14" style="vertical-align:-2px"><path d="M6 1v8M3 4l3-3 3 3M2 7v6h8V7" stroke="#F6D77A" stroke-width="1.5" fill="none"/></svg> → 홈 화면에 추가</b>를 누르면 앱처럼 쓸 수 있어요</span><button onclick="this.parentNode.remove();try{localStorage.setItem('ios_tip','1')}catch(e){}">닫기</button>`;
+    document.getElementById('s-home').insertBefore(d,document.getElementById('home')); }
+})();
+renderHome(); if(!S.name) askName();
+</script></body></html>
